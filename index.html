@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+html, body { margin: 0; padding: 0; background: #0B1220; }
+body { font-family: 'Outfit', system-ui, sans-serif; }
+* { box-sizing: border-box; }
+a { color: #FFB454; }
+a:hover { color: #FFC97E; }
+input, button { font-family: inherit; }
+button { cursor: pointer; }
+input::placeholder { color: #5D6E92; }
+@keyframes pulseRing { 0% { r: 9; opacity: 0.9; } 70% { r: 26; opacity: 0; } 100% { r: 26; opacity: 0; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #25355C; border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+</style>
+</helmet>
+<div style="min-height: 100vh; background: radial-gradient(1100px 700px at 75% -10%, #17233F 0%, #0B1220 60%); color: #ECF2FF;">
+  <div style="max-width: 1160px; margin: 0 auto; padding: 20px 24px 60px;">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+      <div onClick="{{ goHome }}" style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: #FFB454; display: grid; place-items: center; box-shadow: 0 4px 18px rgba(255,180,84,.35);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B1220" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c-3.2 3.5-3.2 14.5 0 18M12 3c3.2 3.5 3.2 14.5 0 18"></path></svg>
+        </div>
+        <div>
+          <div style="font-weight: 800; font-size: 20px; letter-spacing: 3px; line-height: 1.1;">TERRA</div>
+          <div style="font-size: 11.5px; color: #93A3C4; letter-spacing: 1.5px; text-transform: uppercase;">{{ t.tag }}</div>
+        </div>
+      </div>
+      <div style="display: flex; background: #131C30; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 3px; gap: 2px;">
+        <button onClick="{{ setEn }}" style="border: none; border-radius: 8px; padding: 7px 14px; font-weight: 700; font-size: 13px; background: {{ langEnBg }}; color: {{ langEnColor }};">EN</button>
+        <button onClick="{{ setDe }}" style="border: none; border-radius: 8px; padding: 7px 14px; font-weight: 700; font-size: 13px; background: {{ langDeBg }}; color: {{ langDeColor }};">DE</button>
+      </div>
+    </div>
+
+    <sc-if value="{{ vHome }}" hint-placeholder-val="{{ true }}">
+      <div data-screen-label="Home" style="animation: fadeUp .35s ease;">
+        <div style="margin: 46px 0 26px; max-width: 660px;">
+          <h1 style="margin: 0 0 10px; font-size: clamp(30px, 5vw, 46px); font-weight: 800; line-height: 1.05; letter-spacing: -0.5px;">{{ t.heroTitle }}</h1>
+          <p style="margin: 0; color: #93A3C4; font-size: 17px; text-wrap: pretty;">{{ t.heroSub }}</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px;">
+          <span style="font-size: 12.5px; color: #93A3C4; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">{{ t.difficulty }}</span>
+          <sc-for list="{{ diffChips }}" as="ch" hint-placeholder-count="3">
+            <button onClick="{{ ch.set }}" style="border-radius: 10px; padding: 8px 14px; font-size: 14px; font-weight: 700; background: {{ ch.bg }}; border: 1px solid {{ ch.border }}; color: {{ ch.color }}; transition: all .15s ease;">{{ ch.label }} <span style="font-weight: 400; opacity: .7; font-size: 12px;">{{ ch.desc }}</span></button>
+          </sc-for>
+        </div>
+        <button onClick="{{ randomQuiz }}" style="display: inline-flex; align-items: center; gap: 9px; background: rgba(255,180,84,.12); border: 1px solid rgba(255,180,84,.5); color: #FFB454; border-radius: 12px; padding: 11px 18px; font-size: 15px; font-weight: 700; margin-bottom: 36px; transition: all .15s ease;" style-hover="background: rgba(255,180,84,.22); transform: translateY(-2px);">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="8.5" cy="8.5" r="1.25" fill="currentColor" stroke="none"></circle><circle cx="15.5" cy="15.5" r="1.25" fill="currentColor" stroke="none"></circle><circle cx="15.5" cy="8.5" r="1.25" fill="currentColor" stroke="none"></circle><circle cx="8.5" cy="15.5" r="1.25" fill="currentColor" stroke="none"></circle></svg>
+          {{ t.randomQuiz }}
+        </button>
+        <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
+          <div style="margin-bottom: 32px;">
+            <div style="font-size: 12.5px; color: #93A3C4; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 12px;">{{ sec.title }}</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 14px;">
+              <sc-for list="{{ sec.cards }}" as="card" hint-placeholder-count="4">
+                <button onClick="{{ card.open }}" style="text-align: left; display: flex; flex-direction: column; gap: 14px; background: #131C30; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 18px; color: #ECF2FF; transition: transform .15s ease, border-color .15s ease;" style-hover="transform: translateY(-3px); border-color: rgba(255,180,84,.6);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <sc-if value="{{ card.img }}" hint-placeholder-val="{{ false }}"><img src="{{ card.img }}" alt="" style="width: 36px; height: 26px; object-fit: cover; border-radius: 4px; box-shadow: 0 0 0 1px rgba(255,255,255,.18);"></sc-if>
+                    <sc-if value="{{ card.icon }}" hint-placeholder-val="{{ true }}"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#FFB454" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="{{ card.icon }}"></path></svg></sc-if>
+                    <sc-if value="{{ card.best }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #93A3C4; background: #1B2742; padding: 3px 10px; border-radius: 99px; font-variant-numeric: tabular-nums;">{{ t.best }} {{ card.best }}</span></sc-if>
+                  </div>
+                  <div>
+                    <div style="font-weight: 700; font-size: 17px;">{{ card.title }}</div>
+                    <div style="color: #93A3C4; font-size: 13.5px; margin-top: 3px; text-wrap: pretty;">{{ card.desc }}</div>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ vFlagHub }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Fun with Flags" style="margin: 40px auto 0; max-width: 1000px; animation: fadeUp .3s ease;">
+        <button onClick="{{ goHome }}" style="background: none; border: none; color: #93A3C4; font-size: 14px; font-weight: 600; padding: 0; margin-bottom: 18px;">← {{ t.back }}</button>
+        <h2 style="margin: 0 0 6px; font-size: 32px; font-weight: 800;">{{ t.flagHubTitle }}</h2>
+        <p style="margin: 0 0 26px; color: #93A3C4; font-size: 16px; max-width: 620px; text-wrap: pretty;">{{ t.flagHubSub }}</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 14px;">
+          <sc-for list="{{ flagGames }}" as="g" hint-placeholder-count="8">
+            <button onClick="{{ g.open }}" style="text-align: left; display: flex; flex-direction: column; gap: 14px; background: #131C30; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 18px; color: #ECF2FF; transition: transform .15s ease, border-color .15s ease;" style-hover="transform: translateY(-3px); border-color: rgba(255,180,84,.6);">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#FFB454" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="{{ g.icon }}"></path></svg>
+                <sc-if value="{{ g.best }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #93A3C4; background: #1B2742; padding: 3px 10px; border-radius: 99px; font-variant-numeric: tabular-nums;">{{ t.best }} {{ g.best }}</span></sc-if>
+              </div>
+              <div>
+                <div style="font-weight: 700; font-size: 17px;">{{ g.title }}</div>
+                <div style="color: #93A3C4; font-size: 13.5px; margin-top: 3px; text-wrap: pretty;">{{ g.desc }}</div>
+              </div>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ vSetup }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Quiz setup" style="max-width: 640px; margin: 44px auto 0; animation: fadeUp .3s ease;">
+        <button onClick="{{ goHome }}" style="background: none; border: none; color: #93A3C4; font-size: 14px; font-weight: 600; padding: 0; margin-bottom: 18px;">← {{ t.back }}</button>
+        <h2 style="margin: 0 0 6px; font-size: 32px; font-weight: 800;">{{ setupTitle }}</h2>
+        <p style="margin: 0; color: #93A3C4; font-size: 16px;">{{ setupDesc }}</p>
+        <div style="font-size: 12.5px; color: #93A3C4; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin: 26px 0 10px;">{{ setupChipsLabel }}</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <sc-for list="{{ setupChips }}" as="ch" hint-placeholder-count="7">
+            <button onClick="{{ ch.set }}" style="border-radius: 10px; padding: 9px 15px; font-size: 14px; font-weight: 600; background: {{ ch.bg }}; border: 1px solid {{ ch.border }}; color: {{ ch.color }}; transition: all .15s ease;">{{ ch.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ setupChips2Show }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size: 12.5px; color: #93A3C4; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin: 22px 0 10px;">{{ setupChips2Label }}</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <sc-for list="{{ setupChips2 }}" as="ch" hint-placeholder-count="2">
+              <button onClick="{{ ch.set }}" style="border-radius: 10px; padding: 9px 15px; font-size: 14px; font-weight: 600; background: {{ ch.bg }}; border: 1px solid {{ ch.border }}; color: {{ ch.color }}; transition: all .15s ease;">{{ ch.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <div style="margin-top: 14px; color: #93A3C4; font-size: 14px;">{{ setupPoolInfo }}</div>
+        <button onClick="{{ startFromSetup }}" style="margin-top: 26px; background: #FFB454; color: #0B1220; border: none; border-radius: 12px; padding: 15px 34px; font-size: 17px; font-weight: 800; box-shadow: 0 6px 24px rgba(255,180,84,.3); transition: transform .15s ease;" style-hover="transform: translateY(-2px);">{{ startLabel }}</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ vPick }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Pick country" style="max-width: 640px; margin: 44px auto 0; animation: fadeUp .3s ease;">
+        <button onClick="{{ goHome }}" style="background: none; border: none; color: #93A3C4; font-size: 14px; font-weight: 600; padding: 0; margin-bottom: 18px;">← {{ t.back }}</button>
+        <h2 style="margin: 0 0 6px; font-size: 32px; font-weight: 800;">{{ pickTitle }}</h2>
+        <p style="margin: 0 0 16px; color: #93A3C4; font-size: 16px;">{{ pickHint }}</p>
+        <sc-if value="{{ pickShowVariants }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;">
+            <sc-for list="{{ pickVariantChips }}" as="ch" hint-placeholder-count="2">
+              <button onClick="{{ ch.set }}" style="border-radius: 10px; padding: 9px 15px; font-size: 14px; font-weight: 600; background: {{ ch.bg }}; border: 1px solid {{ ch.border }}; color: {{ ch.color }}; transition: all .15s ease;">{{ ch.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <input value="{{ pickQuery }}" onChange="{{ onPickQuery }}" placeholder="{{ t.searchCountry }}" style="width: 100%; background: #131C30; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 14px 16px; font-size: 16px; color: #ECF2FF; outline: none;">
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px; max-height: 56vh; overflow: auto; padding-right: 4px;">
+          <sc-for list="{{ pickList }}" as="p" hint-placeholder-count="8">
+            <button onClick="{{ p.pick }}" style="display: flex; align-items: center; gap: 12px; background: #131C30; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 11px 14px; color: #ECF2FF; transition: border-color .15s ease;" style-hover="border-color: rgba(255,180,84,.6);">
+              <img src="{{ p.flag }}" alt="" style="width: 32px; height: 22px; object-fit: cover; border-radius: 3px; box-shadow: 0 0 0 1px rgba(255,255,255,.15);">
+              <span style="flex: 1; text-align: left; font-weight: 600; font-size: 15.5px;">{{ p.name }}</span>
+              <span style="color: #93A3C4; font-size: 13px;">{{ p.count }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ vQuiz }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Quiz" style="max-width: {{ quizMaxW }}; margin: 30px auto 0; animation: fadeUp .3s ease;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button onClick="{{ goHome }}" style="background: #131C30; border: 1px solid rgba(255,255,255,.1); color: #93A3C4; width: 36px; height: 36px; border-radius: 10px; font-size: 16px; display: grid; place-items: center;">✕</button>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 700; font-size: 16px;">{{ quizTitle }}</div>
+            <div style="font-size: 12.5px; color: #93A3C4;">{{ quizSub }}</div>
+          </div>
+          <sc-if value="{{ streakChip }}" hint-placeholder-val="{{ false }}">
+            <span style="color: #FFB454; font-weight: 700; font-size: 13.5px; background: rgba(255,180,84,.12); border: 1px solid rgba(255,180,84,.4); padding: 4px 11px; border-radius: 99px; white-space: nowrap;">{{ streakChip }}</span>
+          </sc-if>
+          <div style="font-size: 14.5px; color: #93A3C4; font-variant-numeric: tabular-nums; font-weight: 600;">{{ progressText }}</div>
+        </div>
+        <div style="height: 6px; background: #1B2742; border-radius: 99px; margin: 14px 0 22px; overflow: hidden;">
+          <div style="height: 100%; border-radius: 99px; background: #FFB454; transition: width .3s ease; width: {{ progressPct }};"></div>
+        </div>
+        <div style="background: #131C30; border: 1px solid rgba(255,255,255,.08); border-radius: 20px; padding: clamp(18px, 3.5vw, 30px);">
+          <div style="text-align: center; color: #93A3C4; font-size: 15.5px;">{{ qPrompt }}</div>
+          <div style="display: flex; justify-content: center; margin: 18px 0 4px; min-height: 56px; align-items: center;">
+            <sc-if value="{{ qIsImg }}" hint-placeholder-val="{{ false }}">
+              <img src="{{ qImg }}" alt="" style="width: min(300px, 70vw); border-radius: 10px; box-shadow: 0 10px 34px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.14); filter: {{ qImgFilter }}; transition: filter .5s ease;">
+            </sc-if>
+            <sc-if value="{{ qIsZoom }}" hint-placeholder-val="{{ false }}">
+              <div style="width: min(300px, 70vw); aspect-ratio: 3 / 2; overflow: hidden; border-radius: 10px; box-shadow: 0 10px 34px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.14);">
+                <img src="{{ qImg }}" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block; transform: {{ qZoomT }}; transform-origin: {{ qZoomO }}; transition: transform .6s ease;">
+              </div>
+            </sc-if>
+            <sc-if value="{{ qIsText }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <sc-if value="{{ qCtxImg }}" hint-placeholder-val="{{ false }}"><img src="{{ qCtxImg }}" alt="" style="width: 46px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(255,255,255,.18);"></sc-if>
+                <div style="font-size: clamp(26px, 4.5vw, 38px); font-weight: 800; text-align: center; text-wrap: balance;">{{ qMain }}</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ qIsShape }}" hint-placeholder-val="{{ false }}">
+              <svg viewBox="0 0 420 420" style="width: min(310px, 72vw); display: block;"><path d="{{ qShapeD }}" fill="#3B4E7E" stroke="#8FA7DC" stroke-width="1"></path></svg>
+            </sc-if>
+            <sc-if value="{{ qIsSea }}" hint-placeholder-val="{{ false }}">
+              <svg viewBox="0 0 960 500" style="width: 100%; max-width: 660px; display: block;">
+                <path d="{{ sphereD }}" fill="#0E1830" stroke="rgba(255,255,255,.12)" stroke-width="1"></path>
+                <path d="{{ landD }}" fill="#2E4066" stroke="#0B1220" stroke-width="0.5"></path>
+                <circle cx="{{ seaX }}" cy="{{ seaY }}" r="5.5" fill="#FFB454"></circle>
+                <circle cx="{{ seaX }}" cy="{{ seaY }}" r="9" fill="none" stroke="#FFB454" stroke-width="2" style="animation: pulseRing 1.6s ease-out infinite;"></circle>
+              </svg>
+            </sc-if>
+            <sc-if value="{{ qIsMap }}" hint-placeholder-val="{{ false }}">
+              <div style="width: 100%;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 14px;">
+                  <sc-if value="{{ qCtxImg }}" hint-placeholder-val="{{ false }}"><img src="{{ qCtxImg }}" alt="" style="width: 46px; border-radius: 4px; box-shadow: 0 0 0 1px rgba(255,255,255,.18);"></sc-if>
+                  <div style="font-size: clamp(22px, 4vw, 32px); font-weight: 800; text-align: center; text-wrap: balance;">{{ qMain }}</div>
+                </div>
+                <svg viewBox="{{ mapVB }}" style="width: 100%; max-width: {{ mapMaxW }}; display: block; margin: 0 auto;">
+                  <sc-for list="{{ mapRegions }}" as="r" hint-placeholder-count="6">
+                    <path d="{{ r.d }}" fill="{{ r.fill }}" stroke="#0B1220" stroke-width="1" onClick="{{ r.click }}" style="cursor: pointer; transition: fill .12s ease;" style-hover="fill-opacity: 0.8;"></path>
+                  </sc-for>
+                  <sc-for list="{{ mapLakes }}" as="lk" hint-placeholder-count="1">
+                    <path d="{{ lk.d }}" fill="#0C1526" stroke="rgba(255,255,255,.05)" stroke-width="1" style="pointer-events: none;"></path>
+                  </sc-for>
+                  <sc-for list="{{ mapDots }}" as="dot" hint-placeholder-count="1">
+                    <circle cx="{{ dot.cx }}" cy="{{ dot.cy }}" r="7" fill="rgba(255,255,255,.08)" stroke="{{ dot.stroke }}" stroke-width="1.6" onClick="{{ dot.click }}" style="cursor: pointer;"></circle>
+                  </sc-for>
+                </svg>
+              </div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ qTextAnswers }}" hint-placeholder-val="{{ true }}">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 10px; margin-top: 20px;">
+              <sc-for list="{{ answers }}" as="a" hint-placeholder-count="4">
+                <button onClick="{{ a.pick }}" style="border-radius: 12px; padding: 14px 16px; font-size: 16px; font-weight: 600; text-align: center; background: {{ a.bg }}; border: 1.5px solid {{ a.border }}; color: #ECF2FF; opacity: {{ a.op }}; transition: all .15s ease;" style-hover="filter: brightness(1.2);">{{ a.label }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ capMapShow }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; justify-content: center; margin-top: 18px;">
+              <svg viewBox="0 0 960 500" style="width: 100%; max-width: 560px; display: block; background: #0E1830; border-radius: 12px;">
+                <path d="{{ sphereD }}" fill="#0E1830"></path>
+                <path d="{{ landD }}" fill="#2E4066" stroke="#0B1220" stroke-width="0.5"></path>
+                <path d="{{ capHiD }}" fill="rgba(255,180,84,.85)" stroke="#FFB454" stroke-width="1"></path>
+                <circle cx="{{ capX }}" cy="{{ capY }}" r="4" fill="#FFB454"></circle>
+                <circle cx="{{ capX }}" cy="{{ capY }}" r="8" fill="none" stroke="#FFB454" stroke-width="2" style="animation: pulseRing 1.6s ease-out infinite;"></circle>
+              </svg>
+            </div>
+          </sc-if>
+          <sc-if value="{{ qImgAnswers }}" hint-placeholder-val="{{ false }}">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 20px;">
+              <sc-for list="{{ answers }}" as="a" hint-placeholder-count="4">
+                <button onClick="{{ a.pick }}" style="border-radius: 12px; padding: 10px; background: {{ a.bg }}; border: 1.5px solid {{ a.border }}; opacity: {{ a.op }}; transition: all .15s ease;" style-hover="filter: brightness(1.2);">
+                  <img src="{{ a.img }}" alt="" style="width: 100%; border-radius: 6px; display: block;">
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ qNote }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align: center; color: #FFC97E; font-size: 14px; margin-top: 16px; padding: 0 10px; text-wrap: pretty;">{{ qNote }}</div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ vNbMap }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Neighbors map" style="max-width: 860px; margin: 30px auto 0; animation: fadeUp .3s ease;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button onClick="{{ goHome }}" style="background: #131C30; border: 1px solid rgba(255,255,255,.1); color: #93A3C4; width: 36px; height: 36px; border-radius: 10px; font-size: 16px; display: grid; place-items: center;">✕</button>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 700; font-size: 16px;">{{ nbTitle }}</div>
+            <div style="font-size: 12.5px; color: #93A3C4;">{{ nbVariantLabel }}</div>
+          </div>
+          <sc-if value="{{ nbErrors }}" hint-placeholder-val="{{ false }}">
+            <span style="color: #FF6B6B; font-weight: 700; font-size: 13.5px; background: rgba(255,107,107,.1); border: 1px solid rgba(255,107,107,.4); padding: 4px 11px; border-radius: 99px; white-space: nowrap;">{{ nbErrors }}</span>
+          </sc-if>
+          <div style="font-size: 14.5px; color: #93A3C4; font-variant-numeric: tabular-nums; font-weight: 600;">{{ nbProgressText }}</div>
+        </div>
+        <div style="height: 6px; background: #1B2742; border-radius: 99px; margin: 14px 0 22px; overflow: hidden;">
+          <div style="height: 100%; border-radius: 99px; background: #3DDC97; transition: width .3s ease; width: {{ nbProgressPct }};"></div>
+        </div>
+        <div style="background: #131C30; border: 1px solid rgba(255,255,255,.08); border-radius: 20px; padding: clamp(16px, 3vw, 26px);">
+          <div style="text-align: center; color: #93A3C4; font-size: 15.5px;">{{ nbPrompt }}</div>
+          <sc-if value="{{ nbSeqTarget }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align: center; font-size: clamp(22px, 4vw, 32px); font-weight: 800; margin-top: 6px;">{{ nbSeqTarget }}</div>
+          </sc-if>
+          <svg viewBox="0 0 960 620" style="width: 100%; display: block; margin-top: 14px; background: #0E1830; border-radius: 14px;">
+            <sc-for list="{{ nbRegions }}" as="r" hint-placeholder-count="6">
+              <path d="{{ r.d }}" fill="{{ r.fill }}" stroke="{{ r.stroke }}" stroke-width="1" onClick="{{ r.click }}" style="cursor: pointer; transition: fill .12s ease;" style-hover="fill-opacity: 0.82;"></path>
+            </sc-for>
+            <sc-for list="{{ nbDots }}" as="dot" hint-placeholder-count="1">
+              <circle cx="{{ dot.cx }}" cy="{{ dot.cy }}" r="9" fill="rgba(255,255,255,.07)" stroke="{{ dot.stroke }}" stroke-width="1.5" onClick="{{ dot.click }}" style="cursor: pointer;"></circle>
+            </sc-for>
+          </svg>
+          <sc-if value="{{ nbHasFound }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; justify-content: center;">
+              <sc-for list="{{ nbFound }}" as="f" hint-placeholder-count="2">
+                <span style="background: rgba(61,220,151,.12); border: 1px solid rgba(61,220,151,.5); color: #3DDC97; padding: 4px 12px; border-radius: 99px; font-weight: 600; font-size: 13.5px;">{{ f.name }}</span>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ vPinMap }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Pin city" style="max-width: 860px; margin: 30px auto 0; animation: fadeUp .3s ease;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button onClick="{{ goHome }}" style="background: #131C30; border: 1px solid rgba(255,255,255,.1); color: #93A3C4; width: 36px; height: 36px; border-radius: 10px; font-size: 16px; display: grid; place-items: center;">✕</button>
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 700; font-size: 16px;">{{ pinTitle }}</div>
+            <div style="font-size: 12.5px; color: #93A3C4;">{{ pinScore }}</div>
+          </div>
+          <div style="font-size: 14.5px; color: #93A3C4; font-variant-numeric: tabular-nums; font-weight: 600;">{{ pinProgress }}</div>
+        </div>
+        <div style="background: #131C30; border: 1px solid rgba(255,255,255,.08); border-radius: 20px; padding: clamp(16px, 3vw, 26px); margin-top: 16px;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <div style="font-size: clamp(22px, 4vw, 32px); font-weight: 800; text-align: center; text-wrap: balance;">{{ pinPrompt }}</div>
+          </div>
+          <div style="position: relative; margin-top: 14px;">
+            <svg viewBox="{{ pinVB }}" onWheel="{{ pinWheel }}" onMouseDown="{{ pinDown }}" onMouseMove="{{ pinMove }}" onMouseUp="{{ pinUp }}" onMouseLeave="{{ pinUp }}" style="width: 100%; display: block; background: #0C1B2E; border-radius: 14px; cursor: crosshair; touch-action: none;">
+              <path d="{{ pinContext }}" fill="#1B2742" stroke="#0B1220" stroke-width="0.6" style="vector-effect: non-scaling-stroke;"></path>
+              <sc-for list="{{ pinLands }}" as="ld" hint-placeholder-count="1">
+                <path d="{{ ld.d }}" fill="#2E4066" stroke="#5B74A8" stroke-width="1" style="vector-effect: non-scaling-stroke;"></path>
+              </sc-for>
+              <sc-for list="{{ pinBorders }}" as="bd" hint-placeholder-count="1">
+                <path d="{{ bd.d }}" fill="none" stroke="rgba(143,167,220,.45)" stroke-width="0.8" style="vector-effect: non-scaling-stroke;"></path>
+              </sc-for>
+              <sc-for list="{{ pinLakes }}" as="lk" hint-placeholder-count="1">
+                <path d="{{ lk.d }}" fill="#0C1B2E" stroke="rgba(120,165,225,.55)" stroke-width="0.7" style="vector-effect: non-scaling-stroke;"></path>
+              </sc-for>
+              <sc-if value="{{ pinShowTarget }}" hint-placeholder-val="{{ false }}">
+                <line x1="{{ pinPinX }}" y1="{{ pinPinY }}" x2="{{ pinTargetX }}" y2="{{ pinTargetY }}" stroke="#FFB454" stroke-width="1.4" stroke-dasharray="4 3" style="vector-effect: non-scaling-stroke;"></line>
+                <circle cx="{{ pinTargetX }}" cy="{{ pinTargetY }}" r="{{ pinMarkerR }}" fill="#3DDC97" stroke="#0B1220" stroke-width="1.5" style="vector-effect: non-scaling-stroke;"></circle>
+              </sc-if>
+              <sc-if value="{{ pinShowPin }}" hint-placeholder-val="{{ false }}">
+                <circle cx="{{ pinPinX }}" cy="{{ pinPinY }}" r="{{ pinMarkerR }}" fill="#FF6B8A" stroke="#0B1220" stroke-width="1.5" style="vector-effect: non-scaling-stroke;"></circle>
+              </sc-if>
+            </svg>
+            <div style="position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 6px;">
+              <button onClick="{{ pinZoomIn }}" style="width: 34px; height: 34px; border-radius: 9px; background: rgba(19,28,48,.9); border: 1px solid rgba(255,255,255,.14); color: #ECF2FF; font-size: 20px; font-weight: 700; display: grid; place-items: center;">+</button>
+              <button onClick="{{ pinZoomOut }}" style="width: 34px; height: 34px; border-radius: 9px; background: rgba(19,28,48,.9); border: 1px solid rgba(255,255,255,.14); color: #ECF2FF; font-size: 20px; font-weight: 700; display: grid; place-items: center;">−</button>
+              <button onClick="{{ pinReset }}" style="width: 34px; height: 34px; border-radius: 9px; background: rgba(19,28,48,.9); border: 1px solid rgba(255,255,255,.14); color: #93A3C4; font-size: 15px; display: grid; place-items: center;">⤢</button>
+            </div>
+          </div>
+          <sc-if value="{{ pinTapHint }}" hint-placeholder-val="{{ true }}">
+            <div style="text-align: center; color: #5D6E92; font-size: 13.5px; margin-top: 12px;">{{ pinTapHint }}</div>
+          </sc-if>
+          <sc-if value="{{ pinReveal }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 14px; flex-wrap: wrap;">
+              <div style="font-size: 18px; font-weight: 800; color: #FFB454;">{{ pinResult }}</div>
+              <button onClick="{{ pinNext }}" style="background: #FFB454; color: #0B1220; border: none; border-radius: 12px; padding: 12px 26px; font-size: 15.5px; font-weight: 800; box-shadow: 0 6px 24px rgba(255,180,84,.3);" style-hover="transform: translateY(-2px);">{{ pinNextLabel }}</button>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ vResult }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Result" style="max-width: 540px; margin: 64px auto 0; text-align: center; animation: fadeUp .35s ease;">
+        <div style="font-size: 14px; color: #93A3C4; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;">{{ quizTitle }}</div>
+        <div style="font-size: clamp(60px, 11vw, 88px); font-weight: 800; line-height: 1; margin: 20px 0 6px; color: #FFB454; font-variant-numeric: tabular-nums;">{{ resPct }}</div>
+        <div style="font-size: 22px; font-weight: 700;">{{ resMsg }}</div>
+        <div style="color: #93A3C4; margin-top: 8px; font-size: 16px;">{{ resDetail }}</div>
+        <sc-if value="{{ resNewBest }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 16px;"><span style="background: rgba(61,220,151,.14); border: 1px solid #3DDC97; color: #3DDC97; padding: 6px 15px; border-radius: 99px; font-weight: 700; font-size: 14px;">{{ t.newBest }}</span></div>
+        </sc-if>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 34px; flex-wrap: wrap;">
+          <button onClick="{{ replay }}" style="background: #FFB454; color: #0B1220; border: none; border-radius: 12px; padding: 14px 30px; font-size: 16px; font-weight: 800; box-shadow: 0 6px 24px rgba(255,180,84,.3);" style-hover="transform: translateY(-2px);">{{ t.replay }}</button>
+          <button onClick="{{ goHome }}" style="background: #131C30; color: #ECF2FF; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; padding: 14px 30px; font-size: 16px; font-weight: 700;" style-hover="border-color: rgba(255,255,255,.35);">{{ t.home }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ vCompare }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Size comparison" style="margin-top: 40px; animation: fadeUp .3s ease;">
+        <button onClick="{{ goHome }}" style="background: none; border: none; color: #93A3C4; font-size: 14px; font-weight: 600; padding: 0; margin-bottom: 18px;">← {{ t.back }}</button>
+        <h2 style="margin: 0 0 6px; font-size: 32px; font-weight: 800;">{{ t.m_cmp }}</h2>
+        <p style="margin: 0; color: #93A3C4; font-size: 16px; max-width: 640px; text-wrap: pretty;">{{ t.cmpHint }}</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: start; margin-top: 24px;">
+          <div>
+            <input value="{{ cmpQuery }}" onChange="{{ onCmpQuery }}" placeholder="{{ t.searchCountry }}" style="width: 100%; background: #131C30; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 14px 16px; font-size: 16px; color: #ECF2FF; outline: none;">
+            <sc-if value="{{ cmpHasSuggestions }}" hint-placeholder-val="{{ false }}">
+              <div style="background: #131C30; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; margin-top: 8px; overflow: hidden;">
+                <sc-for list="{{ cmpSuggestions }}" as="s" hint-placeholder-count="4">
+                  <button onClick="{{ s.add }}" style="display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none; border-bottom: 1px solid rgba(255,255,255,.06); padding: 11px 14px; color: #ECF2FF;" style-hover="background: #1B2742;">
+                    <img src="{{ s.flag }}" alt="" style="width: 28px; height: 20px; object-fit: cover; border-radius: 3px; box-shadow: 0 0 0 1px rgba(255,255,255,.15);">
+                    <span style="flex: 1; text-align: left; font-weight: 600; font-size: 15px;">{{ s.name }}</span>
+                    <span style="color: #93A3C4; font-size: 13px; font-variant-numeric: tabular-nums;">{{ s.area }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+              <sc-for list="{{ cmpItems }}" as="it" hint-placeholder-count="2">
+                <div style="display: flex; align-items: center; gap: 11px; background: #131C30; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 10px 13px;">
+                  <span style="width: 14px; height: 14px; border-radius: 4px; background: {{ it.color }}; flex-shrink: 0;"></span>
+                  <span style="flex: 1; font-weight: 600; font-size: 15px; min-width: 0;">{{ it.name }}</span>
+                  <span style="color: #93A3C4; font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap;">{{ it.area }}</span>
+                  <span style="color: {{ it.color }}; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ it.rel }}</span>
+                  <button onClick="{{ it.remove }}" style="background: none; border: none; color: #5D6E92; font-size: 15px; padding: 2px 4px;" style-hover="color: #FF6B6B;">✕</button>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ cmpNote }}" hint-placeholder-val="{{ false }}">
+              <p style="color: #5D6E92; font-size: 13px; margin-top: 14px;">{{ cmpNote }}</p>
+            </sc-if>
+          </div>
+          <div style="background: #0E1830; border: 1px solid rgba(255,255,255,.08); border-radius: 20px; position: relative; overflow: hidden;">
+            <svg viewBox="0 0 640 640" style="width: 100%; display: block;">
+              <sc-for list="{{ cmpShapes }}" as="sh" hint-placeholder-count="2">
+                <path d="{{ sh.d }}" fill="{{ sh.fill }}" fill-opacity="0.42" stroke="{{ sh.fill }}" stroke-width="1.5"></path>
+              </sc-for>
+            </svg>
+            <sc-if value="{{ cmpEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="position: absolute; inset: 0; display: grid; place-items: center; color: #5D6E92; font-size: 15px; padding: 30px; text-align: center;">{{ t.cmpEmptyHint }}</div>
+            </sc-if>
+            <sc-if value="{{ cmpLoading }}" hint-placeholder-val="{{ false }}">
+              <div style="position: absolute; inset: 0; display: grid; place-items: center; color: #93A3C4; font-size: 15px; background: rgba(11,18,32,.6);">{{ t.mapLoading }}</div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+      <div style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #2A1B1E; border: 1px solid #FF6B6B; color: #FFB3B3; padding: 12px 20px; border-radius: 12px; font-size: 14px; z-index: 50; max-width: 90vw;">{{ toast }}</div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;roundLength&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: 10, &quot;options&quot;: [5, 10, 15, 20], &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Gameplay&quot; },
+  &quot;autoAdvance&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Gameplay&quot; }
+}">
+class Component extends DCLogic {
+  state = {
+    lang: localStorage.getItem('terra.lang') || 'en',
+    diff: Math.min(3, Math.max(1, +(localStorage.getItem('terra.diff') || 2))),
+    view: 'home', mode: null, cont: 'all',
+    ready: false, topoReady: false, topoError: false, quizLoading: false,
+    quiz: null, picked: -1, lastResult: null,
+    variant: 'mc', pickVariant: 'mc', pickFor: 'nb', mapClicked: '', nbGame: null, pinGame: null,
+    pickQuery: '', cmpQuery: '', cmpSel: ['ch', 'de'],
+    toast: '',
+    best: JSON.parse(localStorage.getItem('terra.best') || '{}')
+  };
+
+  PALETTE = ['#FFB454', '#6B9AFF', '#FF6B8A', '#3DDC97', '#C792EA'];
+
+  MODES = [
+    { id: 'flags', sec: 0, icon: 'M6 21V4m0 0h11l-2.5 3.5L17 11H6' },
+    { id: 'caps', sec: 0, icon: 'M12 3.5l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.7z' },
+    { id: 'cont', sec: 0, icon: 'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c-3.2 3.5-3.2 14.5 0 18M12 3c3.2 3.5 3.2 14.5 0 18' },
+    { id: 'find', sec: 0, icon: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 6.5v11M6.5 12h11' },
+    { id: 'seas', sec: 0, icon: 'M3 9c3-3.5 6 3.5 9 0s6 3.5 9 0M3 15c3-3.5 6 3.5 9 0s6 3.5 9 0' },
+    { id: 'shape', sec: 0, icon: 'M7 4.5L14 3l5.5 4.5-1.5 6 2.5 4-5.5 3.5L7 19l-3.5-6L5 7z' },
+    { id: 'cmp', sec: 1, icon: 'M4 4h11v11H4zM9 9h11v11H9z' },
+    { id: 'nb', sec: 1, icon: 'M4 5h8v14H4zM12 5h8v14h-8z' },
+    { id: 'pin', sec: 1, icon: 'M12 22s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12zM12 7.6a2.4 2.4 0 100 4.8 2.4 2.4 0 000-4.8z' },
+    { id: 'us', sec: 2, img: 'https://flagcdn.com/w80/us.png' },
+    { id: 'chq', sec: 2, img: 'https://flagcdn.com/w80/ch.png' }
+  ];
+
+  I18N = {
+    en: {
+      tag: 'Geo Quiz',
+      heroTitle: 'How well do you know the world?',
+      heroSub: 'Flags, capitals, shapes, seas and more \u2014 pick a quiz and play. 197 countries, from easy to expert.',
+      difficulty: 'Difficulty', d1: 'Easy', d2: 'Medium', d3: 'Hard',
+      dd1: 'well-known countries', dd2: 'most countries', dd3: 'all countries',
+      sec0: 'World quizzes', sec1: 'Explore', sec2: 'Regional',
+      m_flags: 'Flags', d_flags: 'Match the flag to its country',
+      m_caps: 'Capitals', d_caps: 'Do you know every capital?',
+      m_cont: 'Continents', d_cont: 'Which continent is it on?',
+      m_find: 'Find the Country', d_find: 'Click the right country on a continent map',
+      m_seas: 'Seas & Oceans', d_seas: 'Name the marked waters on the map',
+      m_shape: 'Country Shapes', d_shape: 'Recognize countries by their outline',
+      flagHubTitle: 'Fun with Flags', flagHubSub: 'Eight ways to test your flag knowledge \u2014 classic matching, lookalikes, close-ups, blur, capitals, continents and a 60-second speed run.',
+      m_flagsim: 'Lookalikes', d_flagsim: 'Spot the right flag among near-identical ones',
+      m_flagspec: 'Special Flags', d_flagspec: 'Unusual shapes and distinctive emblems',
+      m_flagzoom: 'Zoomed In', d_flagzoom: 'Name the flag from a close-up detail',
+      m_flagblur: 'Through the Blur', d_flagblur: 'Guess the flag hidden behind the blur',
+      m_flagcap: 'Flag to Capital', d_flagcap: 'See a flag, name its capital',
+      m_flagcont: 'Flag to Continent', d_flagcont: 'See a flag, name its continent',
+      m_flagspeed: 'Speed Run', d_flagspeed: 'As many flags as you can in 60 seconds',
+      simP: 'These flags look alike \u2014 which one is it?',
+      zoomP: 'Which country\u0027s flag is this close-up from?',
+      blurP: 'Which flag is hidden in the blur?',
+      flagCapP: 'What is the capital of this country?',
+      flagContP: 'Which continent flies this flag?',
+      speedResult: '{x} flags', speedAcc: '{x}% correct', speedScore: '{x} flags',
+      m_cmp: 'Size Comparison', d_cmp: 'Overlay countries at true scale',
+      m_nb: 'Neighbors', d_nb: 'Pick a country \u2014 quiz or click its neighbors',
+      m_pin: 'Pin the City', d_pin: 'Pick a country, then drop a pin on its cities',
+      pinPickTitle: 'Pin the City', pinPickHint: 'Choose a country, then pin its cities on the map.',
+      pinCount: '{x} cities', pinPrompt: 'Where is {x}?',
+      pinTapHint: 'Tap the map to drop your pin \u00B7 scroll or drag to zoom',
+      pinResultKm: '{x} km off', pinPerfect: 'Bull\u0027s-eye!', pinNext: 'Next city', pinFinish: 'See result',
+      pinAvg: '{x} km avg', zoomReset: 'Reset',
+      m_us: 'US States', d_us: 'The 50 states \u2014 quiz or map',
+      m_chq: 'Swiss Cantons', d_chq: 'Cantons \u2014 capitals, abbreviations or map',
+      best: 'Best', region: 'Region', world: 'World', start: 'Start quiz', starting: 'Loading\u2026',
+      back: 'Back', countries: 'countries', questions: 'questions',
+      searchCountry: 'Search for a country\u2026', pickHint: 'Choose a country to be quizzed on its neighbors.', nbCount: '{x} neighbors',
+      whichFlag: 'Which country does this flag belong to?',
+      flagOfP: 'Which is the flag of this country?',
+      capOfP: 'What is the capital of {x}?',
+      capWhichP: 'Which country has this capital?',
+      contOfP: 'Which continent is this country on?',
+      nbP: 'Which of these countries is a direct neighbor?',
+      seaQ: 'Which sea or ocean is marked?',
+      shapeQ: 'Which country is this?',
+      stateCapP: 'What is the capital of this state?',
+      stateWhichP: 'Which US state has this capital?',
+      cantonCapP: 'What is the capital of this canton?',
+      abbrP: 'Which canton has this abbreviation?',
+      streak: '{x} in a row',
+      newBest: 'New best score!', replay: 'Play again', home: 'Menu',
+      resOf: '{x} of {y} correct', score: 'points',
+      msg100: 'Perfect!', msg80: 'Excellent!', msg60: 'Well done!', msg40: 'Keep practicing!', msg0: 'Tough round!',
+      cmpHint: 'Add up to 5 countries and see them overlaid at true scale \u2014 equal-area and colour-coded.',
+      cmpEmptyHint: 'Add countries on the left to compare their real sizes.',
+      cmpNote: 'True-scale overlay \u00B7 equal-area projection \u00B7 shapes centred for comparison \u00B7 \u00D7 = share of the largest',
+      qtype: 'Mode', vtQuestions: 'Multiple choice', vtMap: 'Find on the map',
+      statesWord: 'states', cantonsWord: 'cantons', mapWord: 'Map',
+      m_usmap: 'US States \u00B7 Map', m_chqmap: 'Swiss Cantons \u00B7 Map', m_contmap: 'Continents \u00B7 Map',
+      m_contkids: 'Continents \u00B7 Kids', contKidsP: 'Click this continent!', vtKids: 'For kids',
+      stateClickP: 'Find this state on the map', cantonClickP: 'Find this canton on the map',
+      contClickP: 'Click the continent this country is on',
+      findClickP: 'Find this country on the map',
+      findVarSome: 'Random countries', findVarAll: 'All countries',
+      randomQuiz: 'Surprise me',
+      nbMapPrompt: 'Click all {x} neighbors of {y}', foundOf: '{x}/{y} found', errorsN: '{x} wrong',
+      nbSeqPrompt: 'Click this neighbor of {x}:', vtSeq: 'One by one on the map',
+      mapLoading: 'Loading map\u2026',
+      mapError: 'Map data could not be loaded \u2014 shapes, seas and size comparison need an internet connection.'
+    },
+    de: {
+      tag: 'Geo-Quiz',
+      heroTitle: 'Wie gut kennst du die Welt?',
+      heroSub: 'Flaggen, Hauptst\u00E4dte, Umrisse, Meere und mehr \u2013 w\u00E4hl ein Quiz und leg los. 197 L\u00E4nder, von leicht bis Expertenniveau.',
+      difficulty: 'Schwierigkeit', d1: 'Leicht', d2: 'Mittel', d3: 'Schwer',
+      dd1: 'bekannte L\u00E4nder', dd2: 'die meisten L\u00E4nder', dd3: 'alle L\u00E4nder',
+      sec0: 'Welt-Quizze', sec1: 'Entdecken', sec2: 'Regional',
+      m_flags: 'Flaggen', d_flags: 'Ordne die Flagge dem Land zu',
+      m_caps: 'Hauptst\u00E4dte', d_caps: 'Kennst du alle Hauptst\u00E4dte?',
+      m_cont: 'Kontinente', d_cont: 'Auf welchem Kontinent liegt es?',
+      m_find: 'Land finden', d_find: 'Klicke das richtige Land auf der Kontinentkarte',
+      m_seas: 'Meere & Ozeane', d_seas: 'Benenne das markierte Gew\u00E4sser',
+      m_shape: 'L\u00E4nderumrisse', d_shape: 'Erkenne L\u00E4nder am Umriss',
+      flagHubTitle: 'Fun with Flags', flagHubSub: 'Acht Arten, dein Flaggenwissen zu testen \u2014 Klassik, \u00E4hnliche Flaggen, Ausschnitte, Unsch\u00E4rfe, Hauptst\u00E4dte, Kontinente und ein 60-Sekunden-Speedrun.',
+      m_flagsim: '\u00C4hnliche Flaggen', d_flagsim: 'Finde die richtige unter fast gleichen Flaggen',
+      m_flagspec: 'Besondere Flaggen', d_flagspec: 'Ungew\u00F6hnliche Formen und Embleme',
+      m_flagzoom: 'Herangezoomt', d_flagzoom: 'Erkenne die Flagge an einem Ausschnitt',
+      m_flagblur: 'Verschwommen', d_flagblur: 'Errate die verschwommene Flagge',
+      m_flagcap: 'Flagge zu Hauptstadt', d_flagcap: 'Flagge sehen, Hauptstadt nennen',
+      m_flagcont: 'Flagge zu Kontinent', d_flagcont: 'Flagge sehen, Kontinent nennen',
+      m_flagspeed: 'Speedrun', d_flagspeed: 'So viele Flaggen wie m\u00F6glich in 60 Sekunden',
+      simP: 'Diese Flaggen sehen sich \u00E4hnlich \u2014 welche ist es?',
+      zoomP: 'Von welcher Flagge ist dieser Ausschnitt?',
+      blurP: 'Welche Flagge steckt hinter der Unsch\u00E4rfe?',
+      flagCapP: 'Was ist die Hauptstadt dieses Landes?',
+      flagContP: 'Auf welchem Kontinent weht diese Flagge?',
+      speedResult: '{x} Flaggen', speedAcc: '{x}% richtig', speedScore: '{x} Flaggen',
+      m_cmp: 'Fl\u00E4chenvergleich', d_cmp: 'L\u00E4nder massstabsgetreu \u00FCberlagern',
+      m_nb: 'Nachbarl\u00E4nder', d_nb: 'Nachbarn erraten oder auf der Karte anklicken',
+      m_pin: 'St\u00E4dte-Pin', d_pin: 'Land w\u00E4hlen und Pins auf die St\u00E4dte setzen',
+      pinPickTitle: 'St\u00E4dte-Pin', pinPickHint: 'W\u00E4hle ein Land und setze Pins auf seine St\u00E4dte.',
+      pinCount: '{x} St\u00E4dte', pinPrompt: 'Wo liegt {x}?',
+      pinTapHint: 'Tippe auf die Karte f\u00FCr den Pin \u00B7 scrollen oder ziehen zum Zoomen',
+      pinResultKm: '{x} km daneben', pinPerfect: 'Volltreffer!', pinNext: 'N\u00E4chste Stadt', pinFinish: 'Ergebnis',
+      pinAvg: '\u00D8 {x} km', zoomReset: 'Zur\u00FCck',
+      m_us: 'US-Bundesstaaten', d_us: 'Die 50 Staaten \u2013 Quiz oder Karte',
+      m_chq: 'Schweizer Kantone', d_chq: 'Kantone \u2013 Hauptorte, K\u00FCrzel oder Karte',
+      best: 'Rekord', region: 'Region', world: 'Welt', start: 'Quiz starten', starting: 'L\u00E4dt\u2026',
+      back: 'Zur\u00FCck', countries: 'L\u00E4nder', questions: 'Fragen',
+      searchCountry: 'Land suchen\u2026', pickHint: 'W\u00E4hle ein Land und teste dich zu seinen Nachbarn.', nbCount: '{x} Nachbarn',
+      whichFlag: 'Zu welchem Land geh\u00F6rt diese Flagge?',
+      flagOfP: 'Welche ist die Flagge dieses Landes?',
+      capOfP: 'Was ist die Hauptstadt von {x}?',
+      capWhichP: 'Welches Land hat diese Hauptstadt?',
+      contOfP: 'Auf welchem Kontinent liegt dieses Land?',
+      nbP: 'Welches dieser L\u00E4nder ist ein direktes Nachbarland?',
+      seaQ: 'Welches Meer bzw. welcher Ozean ist markiert?',
+      shapeQ: 'Welches Land ist das?',
+      stateCapP: 'Was ist die Hauptstadt dieses Bundesstaats?',
+      stateWhichP: 'Welcher US-Bundesstaat hat diese Hauptstadt?',
+      cantonCapP: 'Was ist der Hauptort dieses Kantons?',
+      abbrP: 'Welcher Kanton hat dieses K\u00FCrzel?',
+      streak: '{x} in Folge',
+      newBest: 'Neuer Rekord!', replay: 'Nochmal spielen', home: 'Men\u00FC',
+      resOf: '{x} von {y} richtig', score: 'Punkte',
+      msg100: 'Perfekt!', msg80: 'Ausgezeichnet!', msg60: 'Gut gemacht!', msg40: 'Weiter \u00FCben!', msg0: 'Harte Runde!',
+      cmpHint: 'F\u00FCge bis zu 5 L\u00E4nder hinzu und vergleiche sie massstabsgetreu \u2013 fl\u00E4chentreu und farbcodiert.',
+      cmpEmptyHint: 'F\u00FCge links L\u00E4nder hinzu, um ihre echte Gr\u00F6sse zu vergleichen.',
+      cmpNote: 'Massstabsgetreue \u00DCberlagerung \u00B7 fl\u00E4chentreue Projektion \u00B7 zentriert \u00B7 \u00D7 = Anteil am gr\u00F6ssten Land',
+      qtype: 'Modus', vtQuestions: 'Multiple Choice', vtMap: 'Auf der Karte finden',
+      statesWord: 'Bundesstaaten', cantonsWord: 'Kantone', mapWord: 'Karte',
+      m_usmap: 'US-Bundesstaaten \u00B7 Karte', m_chqmap: 'Schweizer Kantone \u00B7 Karte', m_contmap: 'Kontinente \u00B7 Karte',
+      m_contkids: 'Kontinente \u00B7 Kinder', contKidsP: 'Klicke diesen Kontinent an!', vtKids: 'F\u00FCr kleine Entdecker',
+      stateClickP: 'Finde diesen Bundesstaat auf der Karte', cantonClickP: 'Finde diesen Kanton auf der Karte',
+      contClickP: 'Klicke den Kontinent an, auf dem dieses Land liegt',
+      findClickP: 'Finde dieses Land auf der Karte',
+      findVarSome: 'Zuf\u00E4llige L\u00E4nder', findVarAll: 'Alle L\u00E4nder',
+      randomQuiz: '\u00DCberrasch mich',
+      nbMapPrompt: 'Klicke alle {x} Nachbarl\u00E4nder von {y}', foundOf: '{x}/{y} gefunden', errorsN: '{x} Fehler',
+      nbSeqPrompt: 'Klicke dieses Nachbarland von {x}:', vtSeq: 'Nacheinander anklicken',
+      mapLoading: 'Karte wird geladen\u2026',
+      mapError: 'Kartendaten konnten nicht geladen werden \u2013 Umrisse, Meere und Gr\u00F6ssenvergleich brauchen eine Internetverbindung.'
+    }
+  };
+
+  componentDidMount() {
+    this._shapeCache = {};
+    this._trimCache = {};
+    this._cmpCache = { key: '', shapes: [] };
+    import(new URL('geo-data.js', document.baseURI).href)
+      .then(m => { this.DATA = m; this.setState({ ready: true }); })
+      .catch(e => console.error('data load failed', e));
+    this._injectLib('https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js');
+    this._injectLib('https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js');
+    this.topoPromise = this._loadTopo();
+  }
+
+  _injectLib(src) {
+    const s = document.createElement('script');
+    s.src = src;
+    s.async = true;
+    s.onerror = () => { console.warn('lib failed to load: ' + src); this.setState({ topoError: true }); };
+    document.head.appendChild(s);
+  }
+
+  componentWillUnmount() { clearTimeout(this._timer); clearTimeout(this._toastTimer); clearTimeout(this._wrongTimer); clearInterval(this._speedTimer); }
+
+  async _loadTopo() {
+    try {
+      const [topo] = await Promise.all([
+        fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json').then(r => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); }),
+        this._waitForLibs()
+      ]);
+      const fc = topojson.feature(topo, topo.objects.countries);
+      this.allFeats = fc.features;
+      this.featByName = {}; this.featById = {};
+      for (const f of fc.features) {
+        if (f.properties && f.properties.name) this.featByName[f.properties.name.toLowerCase()] = f;
+        if (f.id != null) this.featById[String(f.id)] = f;
+      }
+      const projSea = d3.geoNaturalEarth1().fitSize([960, 500], { type: 'Sphere' });
+      const pathSea = d3.geoPath(projSea);
+      this.projSea = projSea;
+      this.sphereD = pathSea({ type: 'Sphere' });
+      this.landD = pathSea(fc);
+      this.setState({ topoReady: true });
+      return true;
+    } catch (e) {
+      console.warn('topo load failed', e);
+      this.setState({ topoError: true });
+      return false;
+    }
+  }
+
+  _waitForLibs() {
+    return new Promise((resolve, reject) => {
+      let n = 0;
+      const tick = () => {
+        if (window.d3 && window.topojson) return resolve();
+        if (++n > 300) return reject(new Error('d3/topojson not available'));
+        setTimeout(tick, 100);
+      };
+      tick();
+    });
+  }
+
+  // ---------- helpers ----------
+  fmt(s, x, y) { return String(s).replace('{x}', x).replace('{y}', y); }
+  T() { return this.I18N[this.state.lang] || this.I18N.en; }
+  cname(c) { return this.state.lang === 'de' ? c.de : c.en; }
+  ccap(c) { return this.state.lang === 'de' ? c.capDe : c.cap; }
+  flag(iso, w) { return 'https://flagcdn.com/w' + (w || 320) + '/' + iso + '.png'; }
+  fmtArea(a) {
+    const nf = new Intl.NumberFormat(this.state.lang === 'de' ? 'de-CH' : 'en-US');
+    return nf.format(a < 10 ? a : Math.round(a)) + ' km\u00B2';
+  }
+  roundLen() { return Math.max(3, +(this.props.roundLength ?? 10)); }
+  byIso(iso) { return this.DATA.COUNTRIES.find(c => c.iso === iso); }
+
+  _shuffle(a) {
+    const b = a.slice();
+    for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; }
+    return b;
+  }
+
+  _cycle(pool, len) {
+    if (!pool || !pool.length) return [];
+    let out = [];
+    while (out.length < len) {
+      const batch = this._shuffle(pool);
+      if (out.length && batch[0] === out[out.length - 1] && batch.length > 1) batch.push(batch.shift());
+      out = out.concat(batch);
+    }
+    return out.slice(0, len);
+  }
+
+  _distract(correct, pools, n, key) {
+    const seen = new Set([key(correct)]);
+    const out = [];
+    for (const list of pools) {
+      for (const x of this._shuffle(list)) {
+        if (out.length >= n) return out;
+        if (x === correct) continue;
+        const k = key(x);
+        if (!k || seen.has(k)) continue;
+        seen.add(k); out.push(x);
+      }
+      if (out.length >= n) return out;
+    }
+    return out;
+  }
+
+  _mcq(correct, wrong, labelFn) {
+    return this._shuffle([{ v: correct, ok: true }].concat(wrong.map(w => ({ v: w, ok: false }))))
+      .map(o => ({ label: labelFn ? labelFn(o.v) : o.v, ok: o.ok }));
+  }
+
+  pool() {
+    const { diff, cont } = this.state;
+    const list = this.DATA.COUNTRIES.filter(c => cont === 'all' || c.cont === cont);
+    let dd = diff, p = list.filter(c => c.d <= dd);
+    while (p.length < 8 && dd < 3) { dd++; p = list.filter(c => c.d <= dd); }
+    return p;
+  }
+
+  // ---------- geometry ----------
+  featureOf(c) {
+    if (!this.featByName) return null;
+    return this.featByName[c.atlas.toLowerCase()] || this.featById[c.n] || this.featByName[c.en.toLowerCase()] || null;
+  }
+
+  trimmed(c) {
+    if (this._trimCache[c.iso] !== undefined) return this._trimCache[c.iso];
+    let f = this.featureOf(c);
+    if (f && f.geometry && f.geometry.type === 'MultiPolygon') {
+      const polys = f.geometry.coordinates.map(coords => ({ type: 'Feature', geometry: { type: 'Polygon', coordinates: coords } }));
+      let main = polys[0], maxA = -1;
+      for (const p of polys) { const a = d3.geoArea(p); if (a > maxA) { maxA = a; main = p; } }
+      const cen = d3.geoCentroid(main);
+      const kept = polys.filter(p => d3.geoDistance(cen, d3.geoCentroid(p)) < 0.7);
+      f = { type: 'Feature', properties: f.properties, geometry: { type: 'MultiPolygon', coordinates: kept.map(p => p.geometry.coordinates) } };
+    }
+    this._trimCache[c.iso] = f || null;
+    return this._trimCache[c.iso];
+  }
+
+  shapeD(c, size, pad) {
+    size = size || 420; pad = pad || 30;
+    const key = c.iso + ':' + size;
+    if (this._shapeCache[key] !== undefined) return this._shapeCache[key];
+    const f = this.trimmed(c);
+    let d = null;
+    if (f) {
+      const cen = d3.geoCentroid(f);
+      const proj = d3.geoAzimuthalEqualArea().rotate([-cen[0], -cen[1]]).fitExtent([[pad, pad], [size - pad, size - pad]], f);
+      d = d3.geoPath(proj)(f);
+    }
+    this._shapeCache[key] = d;
+    return d;
+  }
+
+  _contMapOf(cont) {
+    this._contMaps = this._contMaps || {};
+    if (!this._contMaps[cont]) {
+      const feats = [], fitFeats = [];
+      for (const x of this.DATA.COUNTRIES) {
+        if (x.cont !== cont) continue;
+        const f = this.trimmed(x);
+        if (!f) continue;
+        feats.push(f);
+        if (!(cont === 'EU' && x.iso === 'ru')) fitFeats.push(f);
+      }
+      if (!feats.length) return null;
+      const coll = { type: 'FeatureCollection', features: fitFeats.length ? fitFeats : feats };
+      const cen = d3.geoCentroid(coll);
+      const proj = d3.geoAzimuthalEqualArea().rotate([-cen[0], -cen[1]]).fitExtent([[20, 20], [940, 480]], coll);
+      const path = d3.geoPath(proj);
+      this._contMaps[cont] = { proj, path, landD: feats.map(f => path(f)).filter(Boolean).join(' ') };
+    }
+    return this._contMaps[cont];
+  }
+
+  compareShapes() {
+    const { cmpSel, topoReady } = this.state;
+    if (!topoReady || !this.DATA) return [];
+    const key = cmpSel.join(',');
+    if (this._cmpCache.key === key) return this._cmpCache.shapes;
+    const size = 640, pad = 44;
+    const sel = cmpSel.map(iso => this.byIso(iso)).filter(c => c && this.trimmed(c));
+    let shapes = [];
+    if (sel.length) {
+      const largest = sel.reduce((a, b) => (a.area >= b.area ? a : b));
+      const fL = this.trimmed(largest);
+      const cenL = d3.geoCentroid(fL);
+      const projL = d3.geoAzimuthalEqualArea().rotate([-cenL[0], -cenL[1]]).fitExtent([[pad, pad], [size - pad, size - pad]], fL);
+      const k = projL.scale();
+      shapes = sel.map((c, i) => {
+        const f = this.trimmed(c);
+        const cen = d3.geoCentroid(f);
+        const proj = d3.geoAzimuthalEqualArea().rotate([-cen[0], -cen[1]]).scale(k).translate([size / 2, size / 2]);
+        return { d: d3.geoPath(proj)(f), fill: this.PALETTE[i % this.PALETTE.length], area: c.area };
+      }).sort((a, b) => b.area - a.area);
+    }
+    this._cmpCache = { key, shapes };
+    return shapes;
+  }
+
+  // ---------- question builders ----------
+  makeQuestions(mode, extra) {
+    const T = this.T(), len = this.roundLen();
+    const D = this.DATA;
+    const nameKey = c => this.cname(c);
+
+    if (mode === 'flags') {
+      const p = this.pool();
+      return this._cycle(p, len).map(c => {
+        const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, nameKey);
+        if (Math.random() < 0.38) {
+          return { prompt: T.flagOfP, kind: 'text', main: this.cname(c), imgOpts: true,
+            opts: this._shuffle([{ img: this.flag(c.iso, 160), ok: true }].concat(wrong.map(w => ({ img: this.flag(w.iso, 160), ok: false })))) };
+        }
+        return { prompt: T.whichFlag, kind: 'img', img: this.flag(c.iso), opts: this._mcq(c, wrong, nameKey) };
+      });
+    }
+    if (mode === 'caps') {
+      const p = this.pool();
+      const capKey = c => this.ccap(c);
+      return this._cycle(p, len).map((c, qi) => {
+        if (qi % 2 === 1) {
+          const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, nameKey);
+          return { prompt: T.capWhichP, kind: 'text', main: this.ccap(c), iso: c.iso, opts: this._mcq(c, wrong, nameKey) };
+        }
+        const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, capKey);
+        return { prompt: this.fmt(T.capOfP, this.cname(c)), kind: 'text', main: this.cname(c), ctxImg: this.flag(c.iso, 80), iso: c.iso, reveal: true, opts: this._mcq(c, wrong, capKey) };
+      });
+    }
+    if (mode === 'cont') {
+      const p = this.DATA.COUNTRIES.filter(c => c.d <= this.state.diff);
+      const li = this.state.lang === 'de' ? 1 : 0;
+      const conts = Object.keys(D.CONTINENTS);
+      return this._cycle(p, len).map(c => {
+        const wrong = this._shuffle(conts.filter(k => k !== c.cont)).slice(0, 3);
+        return { prompt: T.contOfP, kind: 'text', main: this.cname(c), ctxImg: this.flag(c.iso, 80),
+          opts: this._mcq(c.cont, wrong, k => D.CONTINENTS[k][li]) };
+      });
+    }
+    if (mode === 'seas') {
+      let p = D.SEAS.filter(s => s.d <= this.state.diff);
+      if (p.length < 8) p = D.SEAS;
+      const sKey = s => (this.state.lang === 'de' ? s.de : s.en);
+      return this._cycle(p, len).map(s => {
+        const pt = this.projSea([s.lon, s.lat]);
+        const wrong = this._distract(s, [p, D.SEAS], 3, sKey);
+        return { prompt: T.seaQ, kind: 'sea', sea: { x: Math.round(pt[0]), y: Math.round(pt[1]) }, opts: this._mcq(s, wrong, sKey) };
+      });
+    }
+    if (mode === 'shape') {
+      const p = this.pool().filter(c => this.shapeD(c));
+      return this._cycle(p, len).map(c => {
+        const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, nameKey);
+        return { prompt: T.shapeQ, kind: 'shape', shapeD: this.shapeD(c), opts: this._mcq(c, wrong, nameKey) };
+      });
+    }
+    if (mode === 'nb') {
+      const c = extra.country;
+      const nbs = c.nb.map(iso => this.byIso(iso)).filter(Boolean);
+      const nonNb = D.COUNTRIES.filter(x => x !== c && !c.nb.includes(x.iso));
+      const sameCont = nonNb.filter(x => x.cont === c.cont);
+      const n = Math.max(2, Math.min(this.roundLen(), nbs.length * 2));
+      return this._cycle(nbs, n).map(nbC => {
+        const wrong = this._distract(nbC, [sameCont, nonNb], 3, nameKey);
+        return { prompt: T.nbP, kind: 'text', main: this.cname(c), ctxImg: this.flag(c.iso, 80), opts: this._mcq(nbC, wrong, nameKey) };
+      });
+    }
+    if (mode === 'us') {
+      const p = D.US_STATES;
+      const stName = s => (this.state.lang === 'de' ? s.de : s.en);
+      return this._cycle(p, len).map(s => {
+        if (Math.random() < 0.4) {
+          const wrong = this._distract(s, [p], 3, stName);
+          return { prompt: T.stateWhichP, kind: 'text', main: s.cap, opts: this._mcq(s, wrong, stName) };
+        }
+        const wrong = this._distract(s, [p], 3, x => x.cap);
+        return { prompt: T.stateCapP, kind: 'text', main: stName(s), opts: this._mcq(s, wrong, x => x.cap) };
+      });
+    }
+    if (mode === 'chq') {
+      const p = D.CANTONS;
+      const kName = k => (this.state.lang === 'de' ? k.de : k.en);
+      const kCap = k => (this.state.lang === 'de' ? k.capDe : k.capEn);
+      return this._cycle(p, len).map(k => {
+        const r = Math.random();
+        if (r < 0.45) {
+          const wrong = this._distract(k, [p], 3, kName);
+          return { prompt: T.abbrP, kind: 'text', main: k.ab, opts: this._mcq(k, wrong, kName) };
+        }
+        const wrong = this._distract(k, [p], 3, kCap);
+        return { prompt: T.cantonCapP, kind: 'text', main: kName(k), opts: this._mcq(k, wrong, kCap) };
+      });
+    }
+    if (mode === 'flagsim') {
+      const groups = (D.FLAG_SIMILAR || []).map(g => g.map(iso => this.byIso(iso)).filter(Boolean)).filter(g => g.length >= 2);
+      const flat = [].concat.apply([], groups);
+      if (!flat.length) return [];
+      return this._cycle(flat, len).map(c => {
+        const grp = groups.find(g => g.includes(c)) || [];
+        let others = this._shuffle(grp.filter(x => x !== c));
+        if (others.length < 3) {
+          const extra = this._distract(c, [flat, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3 - others.length, nameKey).filter(x => !others.includes(x));
+          others = others.concat(extra);
+        }
+        others = others.slice(0, 3);
+        return { prompt: T.simP, kind: 'text', main: this.cname(c), imgOpts: true,
+          opts: this._shuffle([{ img: this.flag(c.iso, 160), ok: true }].concat(others.map(w => ({ img: this.flag(w.iso, 160), ok: false })))) };
+      });
+    }
+    if (mode === 'flagspec') {
+      const specs = D.FLAG_SPECIAL || [];
+      const noteByIso = {}; specs.forEach(s => { noteByIso[s.iso] = this.state.lang === 'de' ? s.de : s.en; });
+      const p = specs.map(s => this.byIso(s.iso)).filter(Boolean);
+      if (!p.length) return [];
+      return this._cycle(p, Math.min(len, p.length * 3)).map(c => {
+        const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, nameKey);
+        return { prompt: T.whichFlag, kind: 'img', img: this.flag(c.iso), note: noteByIso[c.iso] || '', opts: this._mcq(c, wrong, nameKey) };
+      });
+    }
+    if (mode === 'flagzoom') {
+      const p = this.pool();
+      return this._cycle(p, len).map(c => {
+        const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, nameKey);
+        const s = (2.6 + Math.random() * 1.2).toFixed(2);
+        const ox = Math.round(16 + Math.random() * 68), oy = Math.round(16 + Math.random() * 68);
+        return { prompt: T.zoomP, kind: 'img', img: this.flag(c.iso), zoom: { s, ox, oy }, opts: this._mcq(c, wrong, nameKey) };
+      });
+    }
+    if (mode === 'flagblur') {
+      const p = this.pool();
+      return this._cycle(p, len).map(c => {
+        const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, nameKey);
+        return { prompt: T.blurP, kind: 'img', img: this.flag(c.iso), blur: true, opts: this._mcq(c, wrong, nameKey) };
+      });
+    }
+    if (mode === 'flagcap') {
+      const p = this.pool();
+      const capKey = c => this.ccap(c);
+      return this._cycle(p, len).map(c => {
+        const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, capKey);
+        return { prompt: T.flagCapP, kind: 'img', img: this.flag(c.iso), opts: this._mcq(c, wrong, capKey) };
+      });
+    }
+    if (mode === 'flagcont') {
+      const li = this.state.lang === 'de' ? 1 : 0;
+      const p = D.COUNTRIES.filter(c => c.d <= this.state.diff);
+      const conts = Object.keys(D.CONTINENTS);
+      return this._cycle(p, len).map(c => {
+        const wrong = this._shuffle(conts.filter(k => k !== c.cont)).slice(0, 3);
+        return { prompt: T.flagContP, kind: 'img', img: this.flag(c.iso), opts: this._mcq(c.cont, wrong, k => D.CONTINENTS[k][li]) };
+      });
+    }
+    if (mode === 'flagspeed') {
+      const p = this.pool();
+      return this._cycle(p, 90).map(c => {
+        const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, nameKey);
+        return { prompt: T.whichFlag, kind: 'img', img: this.flag(c.iso), opts: this._mcq(c, wrong, nameKey) };
+      });
+    }
+    return [];
+  }
+
+  // ---------- flow ----------
+  needsTopo(mode) { return mode === 'shape' || mode === 'seas'; }
+
+  showToast(msg) {
+    clearTimeout(this._toastTimer);
+    this.setState({ toast: msg });
+    this._toastTimer = setTimeout(() => this.setState({ toast: '' }), 4500);
+  }
+
+  async startQuiz(mode, extra) {
+    if (!this.DATA) return;
+    if (this.needsTopo(mode) && !this.state.topoReady) {
+      if (this.state.topoError) return this.showToast(this.T().mapError);
+      this.setState({ quizLoading: true });
+      const ok = await this.topoPromise;
+      this.setState({ quizLoading: false });
+      if (!ok) return this.showToast(this.T().mapError);
+    }
+    const qs = this.makeQuestions(mode, extra || {});
+    if (!qs.length) return;
+    clearTimeout(this._timer);
+    this.setState({ view: 'quiz', mode, quiz: { mode, qs, idx: 0, correct: 0, streak: 0, extra: extra || {} }, picked: -1 });
+  }
+
+  openMode(id) {
+    if (id === 'cmp') { this.setState({ view: 'compare' }); return; }
+    if (id === 'nb') { this.setState({ view: 'pick', pickFor: 'nb', pickQuery: '' }); return; }
+    if (id === 'pin') { this.setState({ view: 'pick', pickFor: 'pin', pickQuery: '' }); return; }
+    if (id === 'find') { this.setState({ view: 'setup', mode: 'find', cont: this.state.cont === 'all' ? 'EU' : this.state.cont, variant: 'some' }); return; }
+    if (id === 'flags') { this.setState({ view: 'flaghub' }); return; }
+    if (id === 'caps' || id === 'shape' || id === 'us' || id === 'chq' || id === 'cont') { this.setState({ view: 'setup', mode: id, variant: 'mc' }); return; }
+    this.startQuiz(id);
+  }
+
+  pickAnswer(i) {
+    const { quiz, picked } = this.state;
+    if (!quiz || picked >= 0) return;
+    const ok = quiz.qs[quiz.idx].opts[i].ok;
+    const nq = { ...quiz, correct: quiz.correct + (ok ? 1 : 0), streak: ok ? quiz.streak + 1 : 0 };
+    if (quiz.timed) nq.answered = (quiz.answered || 0) + 1;
+    this.setState({ picked: i, quiz: nq });
+    if (quiz.timed) this._timer = setTimeout(() => this.next(), 320);
+    else if (this.props.autoAdvance ?? true) this._timer = setTimeout(() => this.next(), 1400);
+  }
+
+  pickRegion(key) {
+    const { quiz, picked } = this.state;
+    if (!quiz || picked >= 0) return;
+    const q = quiz.qs[quiz.idx];
+    if (q.kind !== 'map') return;
+    const ok = key === q.key;
+    this.setState({
+      picked: 0, mapClicked: key,
+      quiz: { ...quiz, done: { ...quiz.done, [q.key]: ok ? 'ok' : 'miss' }, correct: quiz.correct + (ok ? 1 : 0), streak: ok ? quiz.streak + 1 : 0 }
+    });
+    if (this.props.autoAdvance ?? true) this._timer = setTimeout(() => this.next(), ok ? 900 : 1700);
+  }
+
+  _loadRegionTopo(kind) {
+    this._regionP = this._regionP || {};
+    if (!this._regionP[kind]) this._regionP[kind] = this._buildRegionTopo(kind).catch(e => { delete this._regionP[kind]; throw e; });
+    return this._regionP[kind];
+  }
+
+  async _buildRegionTopo(kind) {
+    await this._waitForLibs();
+    this._region = this._region || {};
+    if (kind === 'us') {
+      const topo = await fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-albers-10m.json').then(r => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); });
+      const path = d3.geoPath();
+      const fc = topojson.feature(topo, topo.objects.states);
+      this._region.us = { vb: '0 0 975 610', regions: fc.features.map(f => ({ key: f.properties && f.properties.name, d: path(f) })).filter(r => r.key && r.d), lakes: [] };
+    } else {
+      const topo = await fetch('https://unpkg.com/swiss-maps@4/2021/ch-combined.json').then(r => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); });
+      const fc = topojson.feature(topo, topo.objects.cantons);
+      let c0 = fc.features[0].geometry.coordinates;
+      while (Array.isArray(c0[0])) c0 = c0[0];
+      const planar = Math.abs(c0[0]) > 180 || Math.abs(c0[1]) > 90;
+      const proj = (planar ? d3.geoIdentity().reflectY(true) : d3.geoMercator()).fitExtent([[16, 16], [944, 604]], fc);
+      const path = d3.geoPath(proj);
+      const regions = fc.features.map(f => {
+        const k = this.DATA.CANTONS[+f.id - 1];
+        return { key: k ? k.ab : '', d: path(f) };
+      }).filter(r => r.key && r.d);
+      let lakes = [];
+      try { if (topo.objects.lakes) lakes = topojson.feature(topo, topo.objects.lakes).features.map(f => path(f)).filter(Boolean); } catch (e) { lakes = []; }
+      this._region.chq = { vb: '0 0 960 620', regions, lakes };
+    }
+    return this._region[kind];
+  }
+
+  async startMapQuiz(kind) {
+    if (!this.DATA || this.state.quizLoading) return;
+    this.setState({ quizLoading: true });
+    let reg;
+    try { reg = await this._loadRegionTopo(kind); }
+    catch (e) { console.warn('region topo failed', e); this.setState({ quizLoading: false }); return this.showToast(this.T().mapError); }
+    this.setState({ quizLoading: false });
+    const T = this.T(), isUs = kind === 'us';
+    const keys = new Set(reg.regions.map(r => r.key));
+    const pool = (isUs ? this.DATA.US_STATES : this.DATA.CANTONS).filter(x => keys.has(isUs ? x.en : x.ab));
+    const qs = this._shuffle(pool).slice(0, Math.min(this.roundLen(), pool.length)).map(x => ({
+      prompt: isUs ? T.stateClickP : T.cantonClickP, kind: 'map',
+      key: isUs ? x.en : x.ab,
+      main: this.state.lang === 'de' ? x.de : x.en
+    }));
+    if (!qs.length) return this.showToast(T.mapError);
+    clearTimeout(this._timer);
+    const mode = isUs ? 'usmap' : 'chqmap';
+    this.setState({ view: 'quiz', mode, picked: -1, mapClicked: '', quiz: { mode, region: kind, qs, idx: 0, correct: 0, streak: 0, done: {}, extra: {}, replayFn: () => this.startMapQuiz(kind) } });
+  }
+
+  async startContMap(kids) {
+    if (!this.DATA) return;
+    if (!this.state.topoReady) {
+      if (this.state.topoError) return this.showToast(this.T().mapError);
+      this.setState({ quizLoading: true });
+      const ok = await this.topoPromise;
+      this.setState({ quizLoading: false });
+      if (!ok) return this.showToast(this.T().mapError);
+    }
+    this._region = this._region || {};
+    if (!this._region.cont) {
+      const path = d3.geoPath(this.projSea);
+      const contByFeat = new Map();
+      for (const c of this.DATA.COUNTRIES) { const f = this.featureOf(c); if (f && !contByFeat.has(f)) contByFeat.set(f, c.cont); }
+      const EXTRA = { 'Greenland': 'NA', 'W. Sahara': 'AF', 'Western Sahara': 'AF', 'New Caledonia': 'OC', 'Fr. Polynesia': 'OC', 'Puerto Rico': 'NA', 'Falkland Is.': 'SA' };
+      const regions = [];
+      for (const f of (this.allFeats || [])) {
+        const d = path(f);
+        if (!d) continue;
+        const name = f.properties && f.properties.name;
+        regions.push({ key: contByFeat.get(f) || EXTRA[name] || '', d });
+      }
+      this._region.cont = { vb: '0 0 960 500', regions, lakes: [] };
+    }
+    const T = this.T();
+    let qs, mode;
+    if (kids) {
+      const li = this.state.lang === 'de' ? 1 : 0;
+      qs = this._shuffle(Object.keys(this.DATA.CONTINENTS)).map(k => ({
+        prompt: T.contKidsP, kind: 'map', key: k, main: this.DATA.CONTINENTS[k][li]
+      }));
+      mode = 'contkids';
+    } else {
+      const pool = this.DATA.COUNTRIES.filter(c => c.d <= this.state.diff);
+      qs = this._cycle(pool, this.roundLen()).map(c => ({
+        prompt: T.contClickP, kind: 'map', key: c.cont, main: this.cname(c), ctx: this.flag(c.iso, 80)
+      }));
+      mode = 'contmap';
+    }
+    clearTimeout(this._timer);
+    this.setState({ view: 'quiz', mode, picked: -1, mapClicked: '', quiz: { mode, region: 'cont', qs, idx: 0, correct: 0, streak: 0, done: {}, noDone: true, extra: {}, replayFn: () => this.startContMap(kids) } });
+  }
+
+  randomQuiz() {
+    if (!this.DATA) return;
+    const D = this.DATA;
+    const opts = ['flags', 'flagsim', 'flagspec', 'flagzoom', 'flagblur', 'flagcap', 'flagcont', 'flagspeed', 'caps', 'cont', 'seas', 'shape', 'us', 'chq', 'nb', 'pin', 'find'];
+    const mode = opts[Math.floor(Math.random() * opts.length)];
+    if (mode === 'flagspeed') return this.startFlagSpeed();
+    if (mode === 'nb') {
+      const cs = D.COUNTRIES.filter(c => c.nb.length > 0);
+      return this.startQuiz('nb', { country: cs[Math.floor(Math.random() * cs.length)] });
+    }
+    if (mode === 'pin') {
+      const isos = Object.keys(D.CITIES || {});
+      if (!isos.length) return this.startQuiz('flags');
+      return this.startPinGame(this.byIso(isos[Math.floor(Math.random() * isos.length)]));
+    }
+    if (mode === 'find') {
+      const conts = Object.keys(D.CONTINENTS);
+      return this.startFindQuiz(conts[Math.floor(Math.random() * conts.length)], false);
+    }
+    return this.startQuiz(mode);
+  }
+
+  _buildContRegions(cont) {
+    const feats = [];
+    for (const x of this.DATA.COUNTRIES) {
+      if (x.cont !== cont) continue;
+      if (cont === 'EU' && x.iso === 'ru') continue; // huge extent distorts the fit
+      const f = this.trimmed(x);
+      if (f) feats.push({ iso: x.iso, f });
+    }
+    if (!feats.length) return null;
+    const W = 960, H = 560, pad = 24;
+    const coll = { type: 'FeatureCollection', features: feats.map(o => o.f) };
+    const cen = d3.geoCentroid(coll);
+    const proj = d3.geoAzimuthalEqualArea().rotate([-cen[0], -cen[1]]).fitExtent([[pad, pad], [W - pad, H - pad]], coll);
+    const path = d3.geoPath(proj);
+    const regions = [];
+    for (const o of feats) {
+      const d = path(o.f);
+      if (!d) continue;
+      const b = path.bounds(o.f);
+      const area = (b[1][0] - b[0][0]) * (b[1][1] - b[0][1]);
+      const r = { key: o.iso, d, tiny: area < 120 };
+      if (r.tiny) { const ct = path.centroid(o.f); r.cx = Math.round(ct[0]); r.cy = Math.round(ct[1]); }
+      regions.push(r);
+    }
+    return { vb: '0 0 ' + W + ' ' + H, regions, lakes: [] };
+  }
+
+  async startFindQuiz(cont, all) {
+    if (!this.DATA) return;
+    if (!this.state.topoReady) {
+      if (this.state.topoError) return this.showToast(this.T().mapError);
+      this.setState({ quizLoading: true });
+      const ok = await this.topoPromise;
+      this.setState({ quizLoading: false });
+      if (!ok) return this.showToast(this.T().mapError);
+    }
+    const reg = this._buildContRegions(cont);
+    if (!reg || !reg.regions.length) return this.showToast(this.T().mapError);
+    this._region = this._region || {};
+    this._region.find = reg;
+    const T = this.T();
+    const keys = new Set(reg.regions.map(r => r.key));
+    const allPool = this.DATA.COUNTRIES.filter(c => c.cont === cont && keys.has(c.iso));
+    let pool = all ? allPool : allPool.filter(c => c.d <= this.state.diff);
+    if (pool.length < 4) pool = allPool;
+    const seq = this._shuffle(pool).slice(0, all ? pool.length : Math.min(this.roundLen(), pool.length));
+    const qs = seq.map(c => ({ prompt: T.findClickP, kind: 'map', key: c.iso, main: this.cname(c), ctx: this.flag(c.iso, 80) }));
+    if (!qs.length) return this.showToast(T.mapError);
+    clearTimeout(this._timer);
+    this.setState({ view: 'quiz', mode: 'find', picked: -1, mapClicked: '', quiz: { mode: 'find', region: 'find', cont, all, qs, idx: 0, correct: 0, streak: 0, done: {}, extra: {}, replayFn: () => this.startFindQuiz(cont, all) } });
+  }
+
+  async startNbMap(c, seq) {
+    if (!this.DATA) return;
+    if (!this.state.topoReady) {
+      if (this.state.topoError) return this.showToast(this.T().mapError);
+      this.setState({ quizLoading: true });
+      const ok = await this.topoPromise;
+      this.setState({ quizLoading: false });
+      if (!ok) return this.showToast(this.T().mapError);
+    }
+    const targets = c.nb.map(iso => this.byIso(iso)).filter(x => x && this.trimmed(x));
+    if (!targets.length) return this.showToast(this.T().mapError);
+    const W = 960, H = 620, pad = 48;
+    const cFeat = this.trimmed(c);
+    const coll = { type: 'FeatureCollection', features: [cFeat].concat(targets.map(x => this.trimmed(x))) };
+    const cen = d3.geoCentroid(cFeat);
+    const proj = d3.geoAzimuthalEqualArea().rotate([-cen[0], -cen[1]]).fitExtent([[pad, pad], [W - pad, H - pad]], coll);
+    const path = d3.geoPath(proj);
+    const regions = [];
+    for (const x of this.DATA.COUNTRIES) {
+      const f = this.trimmed(x);
+      if (!f) continue;
+      if (d3.geoDistance(cen, d3.geoCentroid(f)) > 1.35) continue;
+      const b = path.bounds(f);
+      if (!b || b[0][0] > W || b[1][0] < 0 || b[0][1] > H || b[1][1] < 0) continue;
+      const d = path(f);
+      if (!d) continue;
+      const area = (b[1][0] - b[0][0]) * (b[1][1] - b[0][1]);
+      const r = { iso: x.iso, d, tiny: area < 130 };
+      if (r.tiny) { const ct = path.centroid(f); r.cx = Math.round(ct[0]); r.cy = Math.round(ct[1]); }
+      regions.push(r);
+    }
+    clearTimeout(this._timer);
+    const tIsos = targets.map(t => t.iso);
+    this.setState({ view: 'nbmap', nbGame: { c, targets: tIsos, seq: !!seq, order: this._shuffle(tIsos), found: [], errors: 0, wrong: '', regions } });
+  }
+
+  clickNb(iso) {
+    const g = this.state.nbGame;
+    if (!g) return;
+    if (iso === g.c.iso || g.found.includes(iso)) return;
+    if (g.found.length >= g.targets.length) return;
+    if (g.seq ? iso === g.order[g.found.length] : g.targets.includes(iso)) {
+      const found = g.found.concat(iso);
+      this.setState({ nbGame: { ...g, found, wrong: '' } });
+      if (found.length === g.targets.length) this._timer = setTimeout(() => this.finishNbMap(), 1000);
+    } else {
+      clearTimeout(this._wrongTimer);
+      this.setState({ nbGame: { ...g, errors: g.errors + 1, wrong: iso } });
+      this._wrongTimer = setTimeout(() => {
+        const g2 = this.state.nbGame;
+        if (g2 && this.state.view === 'nbmap') this.setState({ nbGame: { ...g2, wrong: '' } });
+      }, 650);
+    }
+  }
+
+  // ---------- pin-the-city ----------
+  // swisstopo approximate LV95/LV03 (E,N) -> WGS84 [lon,lat]
+  _chToWgs(E, N) {
+    let y, x;
+    if (E > 2000000) { y = (E - 2600000) / 1e6; x = (N - 1200000) / 1e6; }
+    else { y = (E - 600000) / 1e6; x = (N - 200000) / 1e6; }
+    const lon = 2.6779094 + 4.728982 * y + 0.791484 * y * x + 0.1306 * y * x * x - 0.0436 * y * y * y;
+    const lat = 16.9023892 + 3.238272 * x - 0.270978 * y * y - 0.002528 * x * x - 0.0447 * y * y * x - 0.0140 * x * x * x;
+    return [lon * 100 / 36, lat * 100 / 36];
+  }
+  _deepMap(coords, fn) { return typeof coords[0] === 'number' ? fn(coords) : coords.map(c => this._deepMap(c, fn)); }
+  _reprojFeature(f, fn) { return { type: 'Feature', properties: f.properties, id: f.id, geometry: { type: f.geometry.type, coordinates: this._deepMap(f.geometry.coordinates, fn) } }; }
+
+  async _buildPinMap(c) {
+    await this._waitForLibs();
+    if (c.iso === 'us') {
+      const reg = await this._loadRegionTopo('us');
+      const proj = d3.geoAlbersUsa().scale(1300).translate([487.5, 305]);
+      const a = proj([-124.4, 32.5]), b = proj([-67, 47]);
+      const kmPerPx = (d3.geoDistance([-124.4, 32.5], [-67, 47]) * 6371) / Math.hypot(b[0] - a[0], b[1] - a[1]);
+      return { vb: [0, 0, 975, 610], lands: reg.regions.map(r => r.d), borders: reg.regions.map(r => r.d), context: [], hasBorders: true, proj, extentKm: 4700, kmPerPx };
+    }
+    if (c.iso === 'ch') {
+      const topo = await fetch('https://unpkg.com/swiss-maps@4/2021/ch-combined.json').then(r => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); });
+      const raw = topojson.feature(topo, topo.objects.cantons).features;
+      // Detect whether coords are projected meters (LV95/LV03) or already WGS84 lon/lat.
+      let c0 = raw[0].geometry.coordinates; while (Array.isArray(c0[0])) c0 = c0[0];
+      const projected = Math.abs(c0[0]) > 180 || Math.abs(c0[1]) > 90;
+      const conv = p => this._chToWgs(p[0], p[1]);
+      const fix = f => projected ? this._reprojFeature(f, conv) : f;
+      const cantons = raw.map(fix);
+      const fc = { type: 'FeatureCollection', features: cantons };
+      const W = 960, H = 620, pad = 40;
+      const proj = d3.geoMercator().fitExtent([[pad, pad], [W - pad, H - pad]], fc);
+      const path = d3.geoPath(proj);
+      const lands = cantons.map(f => path(f)).filter(Boolean);
+      let lakesD = [];
+      if (topo.objects.lakes) { try { lakesD = topojson.feature(topo, topo.objects.lakes).features.map(fix).map(f => path(f)).filter(Boolean); } catch (e) { lakesD = []; } }
+      const b = d3.geoBounds(fc);
+      const extentKm = d3.geoDistance([b[0][0], b[0][1]], [b[1][0], b[1][1]]) * 6371;
+      const pa = proj([b[0][0], b[0][1]]), pb = proj([b[1][0], b[1][1]]);
+      const kmPerPx = extentKm / Math.hypot(pb[0] - pa[0], pb[1] - pa[1]);
+      return { vb: [0, 0, W, H], lands, borders: [], context: [], lakesD, hasBorders: false, hasLakes: true, proj, extentKm, kmPerPx };
+    }
+    await this.topoPromise;
+    const W = 960, H = 620, pad = 46;
+    const f = this.trimmed(c);
+    if (!f) throw new Error('no shape');
+    const cen = d3.geoCentroid(f);
+    const proj = d3.geoAzimuthalEqualArea().rotate([-cen[0], -cen[1]]).fitExtent([[pad, pad], [W - pad, H - pad]], f);
+    const path = d3.geoPath(proj);
+    const context = [];
+    for (const x of this.DATA.COUNTRIES) {
+      if (x.iso === c.iso) continue;
+      const xf = this.trimmed(x);
+      if (!xf) continue;
+      if (d3.geoDistance(cen, d3.geoCentroid(xf)) > 0.85) continue;
+      const d = path(xf);
+      if (d) context.push(d);
+    }
+    const b = d3.geoBounds(f);
+    const extentKm = d3.geoDistance([b[0][0], b[0][1]], [b[1][0], b[1][1]]) * 6371;
+    const pa = proj([b[0][0], b[0][1]]), pb = proj([b[1][0], b[1][1]]);
+    const kmPerPx = extentKm / Math.hypot(pb[0] - pa[0], pb[1] - pa[1]);
+    return { vb: [0, 0, W, H], lands: [path(f)], borders: [], context, hasBorders: false, proj, extentKm, kmPerPx };
+  }
+
+  async startPinGame(c) {
+    if (!this.DATA || this.state.quizLoading) return;
+    const cities = (this.DATA.CITIES && this.DATA.CITIES[c.iso]) || [];
+    if (!cities.length) return this.showToast(this.T().mapError);
+    this.setState({ quizLoading: true });
+    let map;
+    try { map = await this._buildPinMap(c); }
+    catch (e) { console.warn('pin map failed', e); this.setState({ quizLoading: false }); return this.showToast(this.T().mapError); }
+    this.setState({ quizLoading: false });
+    const chosen = this._shuffle(cities).slice(0, Math.min(6, cities.length));
+    // Precompute target pixels now, while the projection is guaranteed valid.
+    const targets = chosen.map(ci => { const p = map.proj([ci.lon, ci.lat]); return p ? { x: Math.round(p[0]), y: Math.round(p[1]) } : null; });
+    clearTimeout(this._timer);
+    this.setState({ view: 'pinmap', pinGame: { c, map, cities: chosen, targets, kmPerPx: map.kmPerPx, idx: 0, results: [], pin: null, target: null, reveal: false, lastKm: 0, vb: map.vb.slice() } });
+  }
+
+  _svgPt(e, g) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const vb = g.vb;
+    return [vb[0] + (e.clientX - rect.left) / rect.width * vb[2], vb[1] + (e.clientY - rect.top) / rect.height * vb[3]];
+  }
+
+  pinDown(e) { const g = this.state.pinGame; if (!g) return; this._pdrag = { sx: e.clientX, sy: e.clientY, vb: g.vb.slice(), p: this._svgPt(e, g), moved: false }; }
+  pinMove(e) {
+    const g = this.state.pinGame, d = this._pdrag; if (!g || !d) return;
+    const dx = e.clientX - d.sx, dy = e.clientY - d.sy;
+    if (Math.abs(dx) + Math.abs(dy) > 4) d.moved = true;
+    if (!d.moved) return;
+    const rect = e.currentTarget.getBoundingClientRect(), vb = d.vb;
+    this.setState({ pinGame: { ...g, vb: [vb[0] - dx / rect.width * vb[2], vb[1] - dy / rect.height * vb[3], vb[2], vb[3]] } });
+  }
+  pinUp(e) { const g = this.state.pinGame, d = this._pdrag; this._pdrag = null; if (!g || !d) return; if (!d.moved && !g.reveal) this.pinPlace(d.p[0], d.p[1]); }
+  pinWheel(e) { const g = this.state.pinGame; if (!g) return; const p = this._svgPt(e, g); this._pinZoom(e.deltaY < 0 ? 0.82 : 1.2, p[0], p[1]); }
+  pinZoomBtn(f) { const g = this.state.pinGame; if (!g) return; this._pinZoom(f, g.vb[0] + g.vb[2] / 2, g.vb[1] + g.vb[3] / 2); }
+  pinReset() { const g = this.state.pinGame; if (!g) return; this.setState({ pinGame: { ...g, vb: g.map.vb.slice() } }); }
+  _pinZoom(f, cx, cy) {
+    const g = this.state.pinGame, vb = g.vb, base = g.map.vb;
+    let nw = Math.max(base[2] * 0.18, Math.min(base[2], vb[2] * f));
+    const nh = nw * (base[3] / base[2]);
+    this.setState({ pinGame: { ...g, vb: [cx - (cx - vb[0]) * (nw / vb[2]), cy - (cy - vb[1]) * (nh / vb[3]), nw, nh] } });
+  }
+
+  pinPlace(vx, vy) {
+    const g = this.state.pinGame; if (!g || g.reveal) return;
+    const t = g.targets[g.idx];
+    if (!t) return;
+    const px = Math.hypot(vx - t.x, vy - t.y);
+    const km = Math.round(px * g.kmPerPx);
+    const pts = Math.max(0, Math.round(100 * (1 - Math.min(1, km / (0.5 * g.map.extentKm)))));
+    this.setState({ pinGame: { ...g, pin: { x: Math.round(vx), y: Math.round(vy) }, target: { x: t.x, y: t.y }, reveal: true, lastKm: km, lastPx: px, results: g.results.concat({ km, pts }) } });
+  }
+
+  pinNext() {
+    const g = this.state.pinGame; if (!g) return;
+    if (g.idx + 1 >= g.cities.length) return this.finishPin();
+    this.setState({ pinGame: { ...g, idx: g.idx + 1, pin: null, target: null, reveal: false, vb: g.map.vb.slice() } });
+  }
+
+  finishPin() {
+    const g = this.state.pinGame, T = this.T(), res = g.results, n = res.length || 1;
+    const avgKm = Math.round(res.reduce((s, r) => s + r.km, 0) / n);
+    const avgPts = Math.round(res.reduce((s, r) => s + r.pts, 0) / n);
+    const totalPts = res.reduce((s, r) => s + r.pts, 0);
+    this._finishResult({
+      mode: 'pin', title: T.m_pin + ' \u00B7 ' + this.cname(g.c),
+      correct: res.filter(r => r.km <= 60).length, total: n,
+      pct: avgPts, score: totalPts,
+      detail: this.fmt(T.pinAvg, avgKm) + ' \u00B7 ' + totalPts + ' ' + T.score,
+      replayFn: () => this.startPinGame(g.c)
+    });
+  }
+
+  startFlagSpeed() {
+    if (!this.DATA) return;
+    const qs = this.makeQuestions('flagspeed', {});
+    if (!qs.length) return;
+    clearTimeout(this._timer); clearInterval(this._speedTimer);
+    const dur = 60;
+    this._speedStart = Date.now();
+    this.setState({ view: 'quiz', mode: 'flagspeed', picked: -1, mapClicked: '',
+      quiz: { mode: 'flagspeed', qs, idx: 0, correct: 0, streak: 0, answered: 0, timed: true, dur, speedLeft: dur, extra: {}, replayFn: () => this.startFlagSpeed() } });
+    this._speedTimer = setInterval(() => {
+      const q = this.state.quiz;
+      if (!q || !q.timed || this.state.view !== 'quiz') { clearInterval(this._speedTimer); return; }
+      const left = Math.max(0, dur - Math.round((Date.now() - this._speedStart) / 1000));
+      if (left <= 0) { clearInterval(this._speedTimer); return this.finishSpeed(); }
+      if (left !== q.speedLeft) this.setState({ quiz: { ...q, speedLeft: left } });
+    }, 250);
+  }
+
+  finishSpeed() {
+    clearInterval(this._speedTimer); clearTimeout(this._timer);
+    const q = this.state.quiz; if (!q) return;
+    const T = this.T(), answered = Math.max(1, q.answered || 0);
+    const acc = Math.round((q.correct / answered) * 100);
+    this._finishResult({
+      mode: 'flagspeed', title: T.m_flagspeed,
+      correct: q.correct, total: answered, pct: acc, score: q.correct,
+      detail: this.fmt(T.speedResult, q.correct) + ' \u00B7 ' + this.fmt(T.speedAcc, acc),
+      replayFn: () => this.startFlagSpeed()
+    });
+  }
+
+  finishNbMap() {
+    const g = this.state.nbGame;
+    if (!g) return;
+    const T = this.T(), c = g.c;
+    this._finishResult({
+      mode: 'nbmap',
+      title: T.m_nb + ' \u00B7 ' + this.cname(c) + ' \u00B7 ' + T.mapWord,
+      correct: Math.max(0, g.targets.length - g.errors),
+      total: g.targets.length,
+      replayFn: () => this.startNbMap(c, g.seq)
+    });
+  }
+
+  next() {
+    clearTimeout(this._timer);
+    const { quiz } = this.state;
+    if (!quiz) return;
+    if (quiz.idx + 1 >= quiz.qs.length) return quiz.timed ? this.finishSpeed() : this.finish();
+    this.setState({ quiz: { ...quiz, idx: quiz.idx + 1 }, picked: -1, mapClicked: '' });
+  }
+
+  finish() {
+    const { quiz } = this.state, T = this.T();
+    const li = this.state.lang === 'de' ? 1 : 0;
+    const title = quiz.mode === 'nb' && quiz.extra.country ? T.m_nb + ' \u00B7 ' + this.cname(quiz.extra.country)
+      : quiz.mode === 'find' && quiz.cont ? T.m_find + ' \u00B7 ' + this.DATA.CONTINENTS[quiz.cont][li]
+      : T['m_' + quiz.mode];
+    this._finishResult({
+      mode: quiz.mode, title,
+      correct: quiz.correct, total: quiz.qs.length,
+      replayFn: quiz.replayFn || (() => this.startQuiz(quiz.mode, quiz.extra))
+    });
+  }
+
+  _finishResult(o) {
+    clearTimeout(this._timer); clearInterval(this._speedTimer);
+    const { best, diff } = this.state;
+    const score = o.score != null ? o.score : o.correct * 100;
+    const key = o.mode + '.' + diff;
+    const isBest = score > (best[key] || 0);
+    const nb = { ...best };
+    if (isBest) { nb[key] = score; localStorage.setItem('terra.best', JSON.stringify(nb)); }
+    this.setState({ view: 'result', best: nb, nbGame: null, pinGame: null, lastResult: { title: o.title, replayFn: o.replayFn, score, correct: o.correct, total: o.total, isBest, pct: o.pct, detail: o.detail } });
+  }
+
+  goHome() { clearTimeout(this._timer); clearInterval(this._speedTimer); this.setState({ view: 'home', picked: -1, mapClicked: '', nbGame: null, pinGame: null, quiz: this.state.quiz && this.state.view === 'quiz' ? null : this.state.quiz }); }
+
+  setLang(l) { localStorage.setItem('terra.lang', l); this.setState({ lang: l }); this._cmpCache = { key: '', shapes: [] }; }
+  setDiff(d) { localStorage.setItem('terra.diff', String(d)); this.setState({ diff: d }); }
+
+  // ---------- render ----------
+  renderVals() {
+    const st = this.state, T = this.T(), lang = st.lang;
+    const li = lang === 'de' ? 1 : 0;
+    const chipOn = { bg: 'rgba(255,180,84,.14)', border: 'rgba(255,180,84,.65)', color: '#FFB454' };
+    const chipOff = { bg: '#131C30', border: 'rgba(255,255,255,.1)', color: '#93A3C4' };
+
+    const vals = {
+      t: T, toast: st.toast,
+      // always-defined defaults so no sc-for/sc-if ever sees undefined
+      setupChips: [], setupChipsLabel: '', setupChips2: [], setupChips2Show: false, setupChips2Label: '', pickVariantChips: [], pickList: [], answers: [], cmpSuggestions: [], cmpItems: [], cmpShapes: [], flagGames: [],
+      setupTitle: '', setupDesc: '', setupPoolInfo: '', startLabel: T.start, startFromSetup: () => {},
+      pickTitle: T.m_nb, pickHint: T.pickHint, pickShowVariants: true,
+      pickQuery: '', onPickQuery: () => {}, cmpQuery: '', onCmpQuery: () => {},
+      vPinMap: st.view === 'pinmap' && !!st.pinGame,
+      pinTitle: '', pinPrompt: '', pinVB: '0 0 960 620', pinProgress: '', pinScore: '', pinTapHint: '',
+      pinLands: [], pinContext: '', pinBorders: [], pinLakes: [], pinMarkerR: '7',
+      pinShowPin: false, pinPinX: -40, pinPinY: -40, pinShowTarget: false, pinTargetX: -40, pinTargetY: -40,
+      pinReveal: false, pinResult: '', pinNextLabel: '',
+      pinNext: () => {}, pinDown: () => {}, pinMove: () => {}, pinUp: () => {}, pinWheel: () => {},
+      pinZoomIn: () => {}, pinZoomOut: () => {}, pinReset: () => {},
+      quizTitle: '', quizSub: '', progressText: '', progressPct: '0%', streakChip: '',
+      qPrompt: '', qIsImg: false, qImg: '', qImgFilter: 'none', qIsZoom: false, qZoomT: 'scale(1)', qZoomO: 'center', qNote: '', qIsText: false, qMain: '', qCtxImg: '',
+      qIsShape: false, qShapeD: '', qIsSea: false, sphereD: '', landD: '', seaX: 0, seaY: 0,
+      qImgAnswers: false, qTextAnswers: true,
+      capMapShow: false, capHiD: '', capX: -20, capY: -20,
+      qIsMap: false, mapVB: '0 0 975 610', mapRegions: [], mapLakes: [], mapDots: [], quizMaxW: '780px', mapMaxW: '720px',
+      nbTitle: '', nbPrompt: '', nbSeqTarget: '', nbVariantLabel: '', nbProgressText: '', nbProgressPct: '0%', nbErrors: '', nbRegions: [], nbDots: [], nbFound: [], nbHasFound: false,
+      resPct: '', resMsg: '', resDetail: '', resNewBest: false, replay: () => {},
+      cmpHasSuggestions: false, cmpEmpty: true, cmpLoading: false, cmpNote: '',
+      vHome: st.view === 'home', vFlagHub: st.view === 'flaghub', vSetup: st.view === 'setup', vPick: st.view === 'pick',
+      vQuiz: st.view === 'quiz' && st.quiz, vResult: st.view === 'result', vCompare: st.view === 'compare',
+      vNbMap: st.view === 'nbmap' && !!st.nbGame,
+      goHome: () => this.goHome(),
+      randomQuiz: () => this.randomQuiz(),
+      setEn: () => this.setLang('en'), setDe: () => this.setLang('de'),
+      langEnBg: lang === 'en' ? '#FFB454' : 'transparent', langEnColor: lang === 'en' ? '#0B1220' : '#93A3C4',
+      langDeBg: lang === 'de' ? '#FFB454' : 'transparent', langDeColor: lang === 'de' ? '#0B1220' : '#93A3C4',
+      diffChips: [1, 2, 3].map(d => ({
+        label: T['d' + d], desc: T['dd' + d], set: () => this.setDiff(d),
+        ...(st.diff === d ? chipOn : chipOff)
+      })),
+      sections: [0, 1, 2].map(sec => ({
+        title: T['sec' + sec],
+        cards: this.MODES.filter(m => m.sec === sec).map(m => {
+          const b = Math.max(st.best[m.id + '.' + st.diff] || 0, st.best[m.id + 'map.' + st.diff] || 0);
+          return {
+            title: T['m_' + m.id], desc: T['d_' + m.id], icon: m.icon || '', img: m.img || '',
+            best: m.id === 'cmp' ? '' : (b ? String(b) : ''),
+            open: () => this.openMode(m.id)
+          };
+        })
+      }))
+    };
+
+    {
+      const FG = [
+        { id: 'flags', icon: 'M6 21V4m0 0h11l-2.5 3.5L17 11H6' },
+        { id: 'flagsim', icon: 'M4 4h11v11H4zM9 9h11v11H9z' },
+        { id: 'flagspec', icon: 'M12 3.5l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.7z' },
+        { id: 'flagzoom', icon: 'M11 4a7 7 0 100 14 7 7 0 000-14zM20 20l-4-4M8 11h6M11 8v6' },
+        { id: 'flagblur', icon: 'M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z' },
+        { id: 'flagcap', icon: 'M12 3l2.5 5.2 5.5.8-4 3.9 1 5.6-5-2.7-5 2.7 1-5.6-4-3.9 5.5-.8z' },
+        { id: 'flagcont', icon: 'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c-3.2 3.5-3.2 14.5 0 18M12 3c3.2 3.5 3.2 14.5 0 18' },
+        { id: 'flagspeed', icon: 'M13 3L5 13h5l-1 8 8-11h-5l1-7z' }
+      ];
+      vals.flagGames = FG.map(g => {
+        const b = st.best[g.id + '.' + st.diff] || 0;
+        return {
+          icon: g.icon, title: T['m_' + g.id], desc: T['d_' + g.id], best: b ? String(b) : '',
+          open: () => g.id === 'flags' ? this.setState({ view: 'setup', mode: 'flags', variant: 'mc' })
+            : g.id === 'flagspeed' ? this.startFlagSpeed()
+            : this.startQuiz(g.id)
+        };
+      });
+    }
+
+    if (vals.vSetup && this.DATA) {
+      vals.setupTitle = T['m_' + st.mode];
+      vals.setupDesc = T['d_' + st.mode];
+      vals.startLabel = st.quizLoading ? T.starting : T.start;
+      if (st.mode === 'us' || st.mode === 'chq') {
+        const n = st.mode === 'us' ? this.DATA.US_STATES.length : this.DATA.CANTONS.length;
+        vals.setupChipsLabel = T.qtype;
+        vals.setupChips = ['mc', 'map'].map(v => ({
+          label: v === 'mc' ? T.vtQuestions : T.vtMap,
+          set: () => this.setState({ variant: v }),
+          ...(st.variant === v ? chipOn : chipOff)
+        }));
+        vals.setupPoolInfo = n + ' ' + (st.mode === 'us' ? T.statesWord : T.cantonsWord) + ' \u00B7 ' + Math.min(this.roundLen(), n) + ' ' + T.questions;
+        vals.startFromSetup = () => st.variant === 'map' ? this.startMapQuiz(st.mode) : this.startQuiz(st.mode);
+      } else if (st.mode === 'cont') {
+        const p = this.DATA.COUNTRIES.filter(c => c.d <= st.diff);
+        vals.setupChipsLabel = T.qtype;
+        vals.setupChips = ['mc', 'map', 'kids'].map(v => ({
+          label: v === 'mc' ? T.vtQuestions : v === 'map' ? T.vtMap : T.vtKids,
+          set: () => this.setState({ variant: v }),
+          ...(st.variant === v ? chipOn : chipOff)
+        }));
+        vals.setupPoolInfo = st.variant === 'kids'
+          ? Object.keys(this.DATA.CONTINENTS).length + ' ' + T.questions
+          : p.length + ' ' + T.countries + ' \u00B7 ' + Math.min(this.roundLen(), 99) + ' ' + T.questions;
+        vals.startFromSetup = () => st.variant === 'map' ? this.startContMap() : st.variant === 'kids' ? this.startContMap(true) : this.startQuiz('cont');
+      } else if (st.mode === 'find') {
+        const cont = st.cont === 'all' ? 'EU' : st.cont;
+        const conts = Object.keys(this.DATA.CONTINENTS);
+        vals.setupChipsLabel = T.region;
+        vals.setupChips = conts.map(k => ({
+          label: this.DATA.CONTINENTS[k][li],
+          set: () => this.setState({ cont: k }),
+          ...(cont === k ? chipOn : chipOff)
+        }));
+        const vv = st.variant === 'all' ? 'all' : 'some';
+        vals.setupChips2Show = true;
+        vals.setupChips2Label = T.qtype;
+        vals.setupChips2 = ['some', 'all'].map(v => ({
+          label: v === 'some' ? T.findVarSome : T.findVarAll,
+          set: () => this.setState({ variant: v }),
+          ...(vv === v ? chipOn : chipOff)
+        }));
+        const poolAll = this.DATA.COUNTRIES.filter(c => c.cont === cont);
+        const poolSome = poolAll.filter(c => c.d <= st.diff);
+        vals.setupPoolInfo = vv === 'all'
+          ? poolAll.length + ' ' + T.countries
+          : poolSome.length + ' ' + T.countries + ' \u00B7 ' + Math.min(this.roundLen(), poolSome.length) + ' ' + T.questions;
+        vals.startFromSetup = () => this.startFindQuiz(cont, vv === 'all');
+      } else {
+        const p = this.pool();
+        const conts = ['all'].concat(Object.keys(this.DATA.CONTINENTS));
+        vals.setupChipsLabel = T.region;
+        vals.setupChips = conts.map(k => ({
+          label: k === 'all' ? T.world : this.DATA.CONTINENTS[k][li],
+          set: () => this.setState({ cont: k }),
+          ...(st.cont === k ? chipOn : chipOff)
+        }));
+        vals.setupPoolInfo = p.length + ' ' + T.countries + ' \u00B7 ' + Math.min(this.roundLen(), 99) + ' ' + T.questions;
+        vals.startFromSetup = () => this.startQuiz(st.mode);
+      }
+    }
+
+    if (vals.vPick && this.DATA) {
+      const q = st.pickQuery.trim().toLowerCase();
+      const isPin = st.pickFor === 'pin';
+      vals.pickTitle = isPin ? T.pinPickTitle : T.m_nb;
+      vals.pickHint = isPin ? T.pinPickHint : T.pickHint;
+      vals.pickShowVariants = !isPin;
+      vals.pickQuery = st.pickQuery;
+      vals.onPickQuery = e => this.setState({ pickQuery: e.target.value });
+      vals.pickVariantChips = ['mc', 'map', 'seq'].map(v => ({
+        label: v === 'mc' ? T.vtQuestions : v === 'map' ? T.vtMap : T.vtSeq,
+        set: () => this.setState({ pickVariant: v }),
+        ...(st.pickVariant === v ? chipOn : chipOff)
+      }));
+      if (isPin) {
+        const CITIES = this.DATA.CITIES || {};
+        vals.pickList = this.DATA.COUNTRIES
+          .filter(c => (CITIES[c.iso] || []).length > 0)
+          .filter(c => !q || this.cname(c).toLowerCase().includes(q) || c.en.toLowerCase().includes(q))
+          .sort((a, b) => this.cname(a).localeCompare(this.cname(b)))
+          .map(c => ({
+            flag: this.flag(c.iso, 80), name: this.cname(c),
+            count: this.fmt(T.pinCount, CITIES[c.iso].length),
+            pick: () => this.startPinGame(c)
+          }));
+      } else {
+        vals.pickList = this.DATA.COUNTRIES
+          .filter(c => c.nb.length > 0)
+          .filter(c => !q || this.cname(c).toLowerCase().includes(q) || c.en.toLowerCase().includes(q))
+          .sort((a, b) => (a.d - b.d) || this.cname(a).localeCompare(this.cname(b)))
+          .slice(0, 30)
+          .map(c => ({
+            flag: this.flag(c.iso, 80), name: this.cname(c),
+            count: this.fmt(T.nbCount, c.nb.length),
+            pick: () => st.pickVariant === 'mc' ? this.startQuiz('nb', { country: c }) : this.startNbMap(c, st.pickVariant === 'seq')
+          }));
+      }
+    }
+
+    if (vals.vQuiz) {
+      const quiz = st.quiz, q = quiz.qs[quiz.idx], len = quiz.qs.length;
+      vals.quizTitle = quiz.mode === 'nb' && quiz.extra.country ? T.m_nb + ' \u00B7 ' + this.cname(quiz.extra.country)
+        : quiz.mode === 'find' && quiz.cont ? T.m_find + ' \u00B7 ' + this.DATA.CONTINENTS[quiz.cont][li]
+        : T['m_' + quiz.mode];
+      const contLabel = ['us', 'chq', 'nb', 'usmap', 'chqmap', 'find'].includes(quiz.mode) ? '' :
+        (st.cont === 'all' || quiz.mode === 'cont' || quiz.mode === 'contmap' || quiz.mode === 'seas' ? T.world : this.DATA.CONTINENTS[st.cont][li]);
+      vals.quizSub = [contLabel, T['d' + st.diff]].filter(Boolean).join(' \u00B7 ');
+      vals.progressText = (quiz.idx + 1) + '/' + len;
+      vals.progressPct = (((quiz.idx + (st.picked >= 0 ? 1 : 0)) / len) * 100).toFixed(1) + '%';
+      vals.streakChip = quiz.streak >= 3 ? this.fmt(T.streak, quiz.streak) : '';
+      if (quiz.timed) {
+        const left = quiz.speedLeft != null ? quiz.speedLeft : quiz.dur;
+        vals.progressText = left + 's';
+        vals.progressPct = ((left / (quiz.dur || 60)) * 100).toFixed(1) + '%';
+        vals.streakChip = this.fmt(T.speedScore, quiz.correct);
+      }
+      vals.qPrompt = q.prompt;
+      vals.qIsImg = q.kind === 'img' && !q.zoom; vals.qImg = q.img || '';
+      vals.qIsZoom = q.kind === 'img' && !!q.zoom;
+      vals.qImgFilter = (q.blur && st.picked < 0) ? 'blur(11px)' : 'none';
+      if (q.zoom) {
+        vals.qZoomT = st.picked >= 0 ? 'scale(1)' : 'scale(' + q.zoom.s + ')';
+        vals.qZoomO = st.picked >= 0 ? 'center' : (q.zoom.ox + '% ' + q.zoom.oy + '%');
+      }
+      vals.qNote = (st.picked >= 0 && q.note) ? q.note : '';
+      vals.qIsText = q.kind === 'text'; vals.qMain = q.main || ''; vals.qCtxImg = q.ctxImg || '';
+      vals.qIsShape = q.kind === 'shape'; vals.qShapeD = q.shapeD || '';
+      vals.qIsSea = q.kind === 'sea';
+      if (q.kind === 'sea') { vals.sphereD = this.sphereD; vals.landD = this.landD; vals.seaX = q.sea.x; vals.seaY = q.sea.y; }
+      vals.qIsMap = q.kind === 'map';
+      vals.quizMaxW = q.kind === 'map' ? '1120px' : '780px';
+      vals.mapMaxW = q.kind === 'map' ? '100%' : '720px';
+      if (q.kind === 'map') {
+        vals.qMain = q.main || '';
+        vals.qCtxImg = q.ctx || '';
+        const reg = this._region && this._region[quiz.region];
+        if (reg) {
+          vals.mapVB = reg.vb;
+          vals.mapLakes = reg.lakes.map(d => ({ d }));
+          vals.mapRegions = reg.regions.map(r => {
+            let fill = '#2E4066';
+            const dn = quiz.noDone ? null : quiz.done[r.key];
+            if (dn === 'ok') fill = 'rgba(61,220,151,.28)';
+            else if (dn === 'miss') fill = 'rgba(255,107,107,.22)';
+            if (st.picked >= 0) {
+              if (r.key === q.key) fill = '#3DDC97';
+              else if (r.key && r.key === st.mapClicked) fill = '#FF6B6B';
+            }
+            return { d: r.d, fill, click: r.key ? () => this.pickRegion(r.key) : (() => {}) };
+          });
+          vals.mapDots = reg.regions.filter(r => r.tiny).map(r => {
+            let stroke = 'rgba(255,255,255,.5)';
+            const dn = quiz.noDone ? null : quiz.done[r.key];
+            if (dn === 'ok') stroke = '#3DDC97'; else if (dn === 'miss') stroke = '#FF6B6B';
+            if (st.picked >= 0) { if (r.key === q.key) stroke = '#3DDC97'; else if (r.key && r.key === st.mapClicked) stroke = '#FF6B6B'; }
+            return { cx: r.cx, cy: r.cy, stroke, click: () => this.pickRegion(r.key) };
+          });
+        }
+      }
+      vals.qImgAnswers = !!q.imgOpts; vals.qTextAnswers = !q.imgOpts && q.kind !== 'map';
+      vals.answers = (q.opts || []).map((o, i) => {
+        let bg = '#1B2742', border = 'rgba(255,255,255,.1)', op = 1;
+        if (st.picked >= 0) {
+          if (o.ok) { bg = 'rgba(61,220,151,.16)'; border = '#3DDC97'; }
+          else if (i === st.picked) { bg = 'rgba(255,107,107,.13)'; border = '#FF6B6B'; }
+          else { op = 0.4; }
+        }
+        return { label: o.label || '', img: o.img || '', bg, border, op: String(op), pick: () => this.pickAnswer(i) };
+      });
+      if (quiz.mode === 'caps' && q.iso && st.topoReady && (q.reveal || st.picked >= 0)) {
+        const c = this.byIso(q.iso);
+        const cm = c && this._contMapOf(c.cont);
+        const f = c && this.trimmed(c);
+        if (cm && f) {
+          const pt = cm.proj(d3.geoCentroid(f));
+          vals.capMapShow = true;
+          vals.landD = cm.landD;
+          vals.capHiD = cm.path(f) || '';
+          vals.capX = Math.round(pt[0]); vals.capY = Math.round(pt[1]);
+        }
+      }
+    }
+
+    if (vals.vResult && st.lastResult) {
+      const r = st.lastResult, pct = Math.round((r.correct / r.total) * 100);
+      vals.quizTitle = r.title || '';
+      vals.resPct = pct + '%';
+      const shown = r.pct != null ? r.pct : pct;
+      vals.resPct = shown + '%';
+      vals.resMsg = shown === 100 ? T.msg100 : shown >= 80 ? T.msg80 : shown >= 60 ? T.msg60 : shown >= 40 ? T.msg40 : T.msg0;
+      vals.resDetail = r.detail || (this.fmt(T.resOf, r.correct, r.total) + ' \u00B7 ' + r.score + ' ' + T.score);
+      vals.resNewBest = r.isBest && r.score > 0;
+      vals.replay = r.replayFn || (() => {});
+    }
+
+    if (vals.vNbMap) {
+      const g = st.nbGame;
+      const total = g.targets.length, found = g.found.length;
+      vals.nbTitle = T.m_nb + ' \u00B7 ' + this.cname(g.c);
+      vals.nbVariantLabel = g.seq ? T.vtSeq : T.vtMap;
+      vals.nbPrompt = g.seq ? this.fmt(T.nbSeqPrompt, this.cname(g.c)) : this.fmt(T.nbMapPrompt, total, this.cname(g.c));
+      if (g.seq && found < total) vals.nbSeqTarget = this.cname(this.byIso(g.order[found]));
+      vals.nbProgressText = this.fmt(T.foundOf, found, total);
+      vals.nbProgressPct = ((found / total) * 100).toFixed(1) + '%';
+      vals.nbErrors = g.errors ? this.fmt(T.errorsN, g.errors) : '';
+      vals.nbRegions = g.regions.map(r => {
+        let fill = '#2E4066', stroke = '#0B1220';
+        if (r.iso === g.c.iso) { fill = 'rgba(255,180,84,.8)'; stroke = '#FFB454'; }
+        else if (g.found.includes(r.iso)) { fill = 'rgba(61,220,151,.4)'; stroke = '#3DDC97'; }
+        else if (g.wrong === r.iso) { fill = 'rgba(255,107,107,.6)'; stroke = '#FF6B6B'; }
+        return { d: r.d, fill, stroke, click: () => this.clickNb(r.iso) };
+      });
+      vals.nbDots = g.regions.filter(r => r.tiny && r.iso !== g.c.iso).map(r => ({
+        cx: r.cx, cy: r.cy,
+        stroke: g.found.includes(r.iso) ? '#3DDC97' : (g.wrong === r.iso ? '#FF6B6B' : 'rgba(255,255,255,.4)'),
+        click: () => this.clickNb(r.iso)
+      }));
+      vals.nbFound = g.found.map(iso => ({ name: this.cname(this.byIso(iso)) }));
+      vals.nbHasFound = vals.nbFound.length > 0;
+    }
+
+    if (vals.vPinMap) {
+      const g = st.pinGame, city = g.cities[g.idx];
+      vals.pinTitle = T.m_pin + ' \u00B7 ' + this.cname(g.c);
+      vals.pinPrompt = this.fmt(T.pinPrompt, lang === 'de' ? city.de : city.en);
+      vals.pinVB = g.vb.join(' ');
+      vals.pinProgress = (g.idx + 1) + '/' + g.cities.length;
+      vals.pinScore = g.results.reduce((s, r) => s + r.pts, 0) + ' ' + T.score;
+      vals.pinTapHint = g.reveal ? '' : T.pinTapHint;
+      vals.pinLands = g.map.lands.map(d => ({ d }));
+      vals.pinContext = (g.map.context || []).join(' ');
+      vals.pinBorders = (g.map.hasBorders ? g.map.borders : []).map(d => ({ d }));
+      vals.pinLakes = (g.map.lakesD || []).map(d => ({ d }));
+      vals.pinMarkerR = (g.vb[2] / 960 * 7).toFixed(1);
+      vals.pinReveal = g.reveal;
+      if (g.pin) { vals.pinShowPin = true; vals.pinPinX = g.pin.x; vals.pinPinY = g.pin.y; }
+      if (g.reveal && g.target) {
+        vals.pinShowTarget = true; vals.pinTargetX = g.target.x; vals.pinTargetY = g.target.y;
+        vals.pinResult = (g.lastPx <= 8 || g.lastKm <= 3) ? T.pinPerfect : this.fmt(T.pinResultKm, g.lastKm);
+      }
+      vals.pinNextLabel = (g.idx + 1 >= g.cities.length) ? T.pinFinish : T.pinNext;
+      vals.pinNext = () => this.pinNext();
+      vals.pinDown = e => this.pinDown(e); vals.pinMove = e => this.pinMove(e); vals.pinUp = e => this.pinUp(e); vals.pinWheel = e => this.pinWheel(e);
+      vals.pinZoomIn = () => this.pinZoomBtn(0.8); vals.pinZoomOut = () => this.pinZoomBtn(1.25); vals.pinReset = () => this.pinReset();
+    }
+
+    if (vals.vCompare && this.DATA) {
+      const q = st.cmpQuery.trim().toLowerCase();
+      vals.cmpQuery = st.cmpQuery;
+      vals.onCmpQuery = e => this.setState({ cmpQuery: e.target.value });
+      const canAdd = st.cmpSel.length < 5;
+      const sugg = !q || !canAdd ? [] : this.DATA.COUNTRIES
+        .filter(c => !st.cmpSel.includes(c.iso))
+        .filter(c => this.cname(c).toLowerCase().includes(q) || c.en.toLowerCase().includes(q))
+        .filter(c => !st.topoReady || this.featureOf(c))
+        .sort((a, b) => b.area - a.area)
+        .slice(0, 7);
+      vals.cmpHasSuggestions = sugg.length > 0;
+      vals.cmpSuggestions = sugg.map(c => ({
+        flag: this.flag(c.iso, 80), name: this.cname(c), area: this.fmtArea(c.area),
+        add: () => this.setState({ cmpSel: st.cmpSel.concat(c.iso), cmpQuery: '' })
+      }));
+      const selC = st.cmpSel.map(iso => this.byIso(iso)).filter(Boolean);
+      const maxA = selC.reduce((m, c) => Math.max(m, c.area), 0);
+      vals.cmpItems = selC.map((c, i) => ({
+        color: this.PALETTE[i % this.PALETTE.length], name: this.cname(c), area: this.fmtArea(c.area),
+        rel: (c.area / maxA).toFixed(c.area / maxA < 0.01 ? 3 : 2) + '\u00D7',
+        remove: () => this.setState({ cmpSel: st.cmpSel.filter(x => x !== c.iso) })
+      }));
+      vals.cmpShapes = this.compareShapes();
+      vals.cmpEmpty = selC.length === 0;
+      vals.cmpLoading = selC.length > 0 && !st.topoReady && !st.topoError;
+      vals.cmpNote = selC.length >= 2 ? T.cmpNote : '';
+      if (st.topoError && selC.length) vals.cmpNote = T.mapError;
+    }
+
+    return vals;
+  }
+}
+</script>
+<!-- game-nav -->
+<nav id="game-nav" aria-label="Game navigation" style="position:fixed;right:10px;bottom:8px;z-index:2147483647;display:flex;gap:12px;align-items:center;font:600 13px/1.4 system-ui,-apple-system,sans-serif;padding:6px 11px;border-radius:8px;background:rgba(15,17,26,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:.55;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.55">
+  <a href="https://github.freaxnx01.ch/games/" style="color:#8fd8e8;text-decoration:none">More Games&hellip;</a>
+  <span style="color:#5a6072" aria-hidden="true">&middot;</span>
+  <a href="https://github.com/freaxnx01/game-geography-quiz" target="_blank" rel="noopener" style="color:#8fd8e8;text-decoration:none">Source</a>
+</nav>
+</body>
+</html>
