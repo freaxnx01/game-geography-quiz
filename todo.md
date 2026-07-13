@@ -22,6 +22,8 @@
 - Schweiz-specific quizzes:
   - Seen (lakes) quiz.
   - Flüsse (rivers) quiz.
+  - Kantonswappen Schweiz quiz.
+- Bundesländer quiz: Deutschland, Österreich.
 - Facts section:
   - Word cloud of longest capital city names (clickable → jumps to map).
   - Word cloud of longest country names (clickable → jumps to map).
