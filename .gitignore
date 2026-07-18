@@ -8,3 +8,5 @@ Thumbs.db
 # Local dev
 node_modules/
 *.log
+
+.worktrees/
