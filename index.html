@@ -7,7 +7,11 @@
 </head>
 <body>
 <script src="./version.js"></script>
-<x-dc>
+<!-- dc template held in an inert <template> so the browser never parses its
+     {{ }} placeholders as live SVG/img (which logged ~39 "Expected number"
+     console errors + image 404s before support.js hydrated). support.js reads
+     the template markup via .innerHTML either way. -->
+<template data-dc-tpl>
 <helmet>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -422,7 +426,7 @@ input::placeholder { color: #5D6E92; }
 
   </div>
 </div>
-</x-dc>
+</template>
 <script type="text/x-dc" data-dc-script data-props="{
   &quot;roundLength&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: 10, &quot;options&quot;: [5, 10, 15, 20], &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Gameplay&quot; },
   &quot;autoAdvance&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Gameplay&quot; }

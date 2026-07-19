@@ -22,7 +22,7 @@
 
   // src/parse.ts
   function parseDcDocument(doc) {
-    const dc = doc.querySelector("x-dc");
+    const dc = doc.querySelector("x-dc") || doc.querySelector("template[data-dc-tpl]");
     if (!dc) return null;
     const scriptEl = doc.querySelector("script[data-dc-script]");
     const { props, preview } = parseDataProps(
@@ -162,7 +162,7 @@
       }).catch(() => {
       });
     }
-    const dc = doc.querySelector("x-dc");
+    const dc = doc.querySelector("x-dc") || doc.querySelector("template[data-dc-tpl]");
     const hostEl = doc.createElement("div");
     hostEl.id = "dc-root";
     dc.replaceWith(hostEl);
