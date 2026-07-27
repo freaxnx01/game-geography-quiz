@@ -31,3 +31,7 @@
 - Show timezones and the day/night terminator line on the globe.
 - Show longitude/latitude on the globe, plus equator & arctic circle.
 - Let user pick two cities and draw a direct air line between them, showing the distance.
+- Language quiz modes:
+  - Sprachen Verwandschaften (Baum) — language family tree.
+  - Weltsprachen: Englisch, Spanisch, Französisch... (where are they spoken).
+  - Which language is spoken where — multiple choice, click on map.
