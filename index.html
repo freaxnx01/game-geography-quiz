@@ -774,7 +774,7 @@ class Component extends DCLogic {
         const f = this.trimmed(x);
         if (!f) continue;
         feats.push(f);
-        if (!(cont === 'EU' && x.iso === 'ru')) fitFeats.push(f);
+        if (x.iso !== 'ru') fitFeats.push(f);
       }
       if (!feats.length) return null;
       const coll = { type: 'FeatureCollection', features: fitFeats.length ? fitFeats : feats };
@@ -1099,7 +1099,7 @@ class Component extends DCLogic {
       const path = d3.geoPath(this.projSea);
       const contByFeat = new Map();
       for (const c of this.DATA.COUNTRIES) { const f = this.featureOf(c); if (f && !contByFeat.has(f)) contByFeat.set(f, c.cont); }
-      const EXTRA = { 'Greenland': 'NA', 'W. Sahara': 'AF', 'Western Sahara': 'AF', 'New Caledonia': 'OC', 'Fr. Polynesia': 'OC', 'Puerto Rico': 'NA', 'Falkland Is.': 'SA' };
+      const EXTRA = { 'Greenland': 'NA', 'W. Sahara': 'AF', 'Western Sahara': 'AF', 'New Caledonia': 'OC', 'Fr. Polynesia': 'OC', 'Puerto Rico': 'NA', 'Falkland Is.': 'SA', 'Antarctica': 'AN' };
       const regions = [];
       for (const f of (this.allFeats || [])) {
         const d = path(f);
@@ -1144,7 +1144,7 @@ class Component extends DCLogic {
       return this.startPinGame(this.byIso(isos[Math.floor(Math.random() * isos.length)]));
     }
     if (mode === 'find') {
-      const conts = Object.keys(D.CONTINENTS);
+      const conts = Object.keys(D.CONTINENTS).filter(k => k !== 'AN');
       return this.startFindQuiz(conts[Math.floor(Math.random() * conts.length)], false);
     }
     return this.startQuiz(mode);
@@ -1154,7 +1154,7 @@ class Component extends DCLogic {
     const feats = [];
     for (const x of this.DATA.COUNTRIES) {
       if (x.cont !== cont) continue;
-      if (cont === 'EU' && x.iso === 'ru') continue; // huge extent distorts the fit
+      if (x.iso === 'ru') continue; // huge extent distorts the fit
       const f = this.trimmed(x);
       if (f) feats.push({ iso: x.iso, f });
     }
@@ -1582,7 +1582,7 @@ class Component extends DCLogic {
         vals.startFromSetup = () => st.variant === 'map' ? this.startContMap() : st.variant === 'kids' ? this.startContMap(true) : this.startQuiz('cont');
       } else if (st.mode === 'find') {
         const cont = st.cont === 'all' ? 'EU' : st.cont;
-        const conts = Object.keys(this.DATA.CONTINENTS);
+        const conts = Object.keys(this.DATA.CONTINENTS).filter(k => k !== 'AN');
         vals.setupChipsLabel = T.region;
         vals.setupChips = conts.map(k => ({
           label: this.DATA.CONTINENTS[k][li],
@@ -1605,7 +1605,7 @@ class Component extends DCLogic {
         vals.startFromSetup = () => this.startFindQuiz(cont, vv === 'all');
       } else {
         const p = this.pool();
-        const conts = ['all'].concat(Object.keys(this.DATA.CONTINENTS));
+        const conts = ['all'].concat(Object.keys(this.DATA.CONTINENTS).filter(k => k !== 'AN'));
         vals.setupChipsLabel = T.region;
         vals.setupChips = conts.map(k => ({
           label: k === 'all' ? T.world : this.DATA.CONTINENTS[k][li],
