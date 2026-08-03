@@ -42,6 +42,7 @@ export const COUNTRIES = [
   C('pl','616','Poland','Polen','Warsaw','Warschau','EU',312696,1,'de cz sk ua by lt ru'),
   C('pt','620','Portugal',null,'Lisbon','Lissabon','EU',92212,1,'es'),
   C('ro','642','Romania','Rumänien','Bucharest','Bukarest','EU',238398,2,'hu ua md bg rs'),
+  C('ru','643','Russia','Russland','Moscow','Moskau','EU',17098246,1,'no fi ee lv lt pl by ua ge az kz cn mn kp'),
   C('sm','674','San Marino',null,'San Marino',null,'EU',61,3,'it'),
   C('rs','688','Serbia','Serbien','Belgrade','Belgrad','EU',88361,2,'hu ro bg mk xk me ba hr'),
   C('sk','703','Slovakia','Slowakei','Bratislava',null,'EU',49035,2,'cz pl ua hu at'),
@@ -53,7 +54,6 @@ export const COUNTRIES = [
   C('gb','826','United Kingdom','Vereinigtes Königreich','London',null,'EU',243610,1,'ie'),
   C('va','336','Vatican City','Vatikanstadt','Vatican City','Vatikanstadt','EU',0.49,2,'it','Vatican'),
   // ---- Asia ----
-  C('ru','643','Russia','Russland','Moscow','Moskau','AS',17098246,1,'no fi ee lv lt pl by ua ge az kz cn mn kp'),
   C('af','004','Afghanistan',null,'Kabul',null,'AS',652864,2,'ir pk tm uz tj cn'),
   C('am','051','Armenia','Armenien','Yerevan','Eriwan','AS',29743,3,'ge az tr ir'),
   C('az','031','Azerbaijan','Aserbaidschan','Baku',null,'AS',86600,3,'ru ge am ir tr'),

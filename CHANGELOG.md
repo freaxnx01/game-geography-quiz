@@ -15,10 +15,17 @@ All notable changes to this project are documented here, following
 
 ### Fixed
 
-- Europe/Asia split no longer follows country borders for Russia: Russia is
-  now classified as Asia (geographic majority — Siberia), consistent with the
-  existing Kazakhstan/Turkey/Georgia/Azerbaijan entries. Previously Russia was
-  counted as Europe (by capital), which miscategorised Siberia.
+- Europe/Asia split on the continents map no longer follows country borders
+  for transcontinental countries: Russia's landmass is now split along an
+  approximate Ural Mountains / Ural River line (European Russia vs.
+  Siberia + the Far East), and Turkey's along the Bosphorus/Dardanelles
+  (East Thrace vs. Anatolia) — previously the whole country was one color,
+  so Siberia counted as Europe. Both countries are also excluded from the
+  single-answer "which continent is this on?" quiz questions (Continents,
+  Flag → Continent, continents-map click-quiz), since a transcontinental
+  country has no single correct answer there. The "Find the Country" mode
+  and each country's `cont` grouping field are unaffected — Russia and
+  Turkey still render as one clickable shape there.
 - Eliminated ~39 SVG "Expected number" console errors and 8 image 404s that
   fired at page load before the app hydrated. The dc template is now held in an
   inert `<template data-dc-tpl>` instead of a live `<x-dc>` element, so the
