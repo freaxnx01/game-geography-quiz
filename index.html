@@ -638,6 +638,7 @@ class Component extends DCLogic {
         this._waitForLibs()
       ]);
       const fc = topojson.feature(topo, topo.objects.countries);
+      this._restoreUkraine1991Borders(fc);
       this.allFeats = fc.features;
       this.featByName = {}; this.featById = {};
       for (const f of fc.features) {
@@ -668,6 +669,35 @@ class Component extends DCLogic {
       };
       tick();
     });
+  }
+
+  // world-atlas@2 follows Russia's de-facto control lines: since 2014 it
+  // attributes Crimea to Russia. Ukraine's internationally recognised 1991
+  // borders — the UN-recognised territory — include Crimea, so move the
+  // Crimean polygon back from Russia to Ukraine before any rendering.
+  _restoreUkraine1991Borders(fc) {
+    const ua = fc.features.find(f => String(f.id) === '804');
+    const ru = fc.features.find(f => String(f.id) === '643');
+    if (!ua || !ru) return;
+    if (ua.geometry.type !== 'MultiPolygon' || ru.geometry.type !== 'MultiPolygon') return;
+    const isCrimea = (poly) => {
+      const ring = poly[0] || [];
+      if (!ring.length) return false;
+      let minLon = Infinity, maxLon = -Infinity, minLat = Infinity, maxLat = -Infinity;
+      for (const [lon, lat] of ring) {
+        if (lon < minLon) minLon = lon;
+        if (lon > maxLon) maxLon = lon;
+        if (lat < minLat) minLat = lat;
+        if (lat > maxLat) maxLat = lat;
+      }
+      return minLon >= 32 && maxLon <= 37 && minLat >= 44 && maxLat <= 46.5;
+    };
+    const moved = [];
+    ru.geometry.coordinates = ru.geometry.coordinates.filter((poly) => {
+      if (isCrimea(poly)) { moved.push(poly); return false; }
+      return true;
+    });
+    if (moved.length) ua.geometry.coordinates = ua.geometry.coordinates.concat(moved);
   }
 
   // ---------- helpers ----------
