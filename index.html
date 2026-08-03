@@ -1186,7 +1186,11 @@ class Component extends DCLogic {
       const path = d3.geoPath(this.projSea);
       const contByFeat = new Map();
       for (const c of this.DATA.COUNTRIES) { const f = this.featureOf(c); if (f && !contByFeat.has(f)) contByFeat.set(f, c.cont); }
-      const EXTRA = { 'Greenland': 'NA', 'W. Sahara': 'AF', 'Western Sahara': 'AF', 'New Caledonia': 'OC', 'Fr. Polynesia': 'OC', 'Puerto Rico': 'NA', 'Falkland Is.': 'SA', 'Antarctica': 'AN' };
+      // Territories with no ISO numeric id in world-atlas (disputed/breakaway
+      // regions, so not in COUNTRIES) fall through to '' without an entry
+      // here, which renders as the neutral "unanswered" fill and visually
+      // paints over whichever recognized country's color they overlap.
+      const EXTRA = { 'Greenland': 'NA', 'W. Sahara': 'AF', 'Western Sahara': 'AF', 'New Caledonia': 'OC', 'Fr. Polynesia': 'OC', 'Puerto Rico': 'NA', 'Falkland Is.': 'SA', 'Antarctica': 'AN', 'Somaliland': 'AF', 'N. Cyprus': 'AS', 'Indian Ocean Ter.': 'AF', 'Siachen Glacier': 'AS' };
       const regions = [];
       // Russia and Turkey are transcontinental — split their landmass into
       // separate EU/AS regions on this map instead of coloring the whole
