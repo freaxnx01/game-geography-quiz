@@ -26,6 +26,11 @@ All notable changes to this project are documented here, following
   country has no single correct answer there. The "Find the Country" mode
   and each country's `cont` grouping field are unaffected — Russia and
   Turkey still render as one clickable shape there.
+- Ukraine is now rendered with its internationally recognised 1991 borders
+  (including Crimea). The `world-atlas@2` dataset attributes Crimea to Russia
+  along Russia's de-facto control line; the loader now moves the Crimean
+  polygon back to Ukraine before any map rendering, so the quiz reflects the
+  UN-recognised Ukrainian state territory rather than the line of control.
 - Eliminated ~39 SVG "Expected number" console errors and 8 image 404s that
   fired at page load before the app hydrated. The dc template is now held in an
   inert `<template data-dc-tpl>` instead of a live `<x-dc>` element, so the
