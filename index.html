@@ -1232,7 +1232,12 @@ class Component extends DCLogic {
       mode = 'contmap';
     }
     clearTimeout(this._timer);
-    this.setState({ view: 'quiz', mode, picked: -1, mapClicked: '', quiz: { mode, region: 'cont', qs, idx: 0, correct: 0, streak: 0, done: {}, noDone: true, extra: {}, replayFn: () => this.startContMap(kids) } });
+    // noDone suppresses persisting the green/red fill between questions.
+    // Needed for the regular click-quiz, where `key` is a continent shared by
+    // many countries — persisting it would give away later answers. Kids mode
+    // asks each continent exactly once, so persisting is safe and desired
+    // (correctly-clicked continents stay green as the round progresses).
+    this.setState({ view: 'quiz', mode, picked: -1, mapClicked: '', quiz: { mode, region: 'cont', qs, idx: 0, correct: 0, streak: 0, done: {}, noDone: !kids, extra: {}, replayFn: () => this.startContMap(kids) } });
   }
 
   randomQuiz() {
