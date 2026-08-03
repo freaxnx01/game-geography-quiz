@@ -218,7 +218,8 @@ export const CONTINENTS = {
   AF: ['Africa', 'Afrika'],
   NA: ['North America', 'Nordamerika'],
   SA: ['South America', 'Südamerika'],
-  OC: ['Oceania', 'Ozeanien']
+  OC: ['Oceania', 'Ozeanien'],
+  AN: ['Antarctica', 'Antarktis']
 };
 
 // Seas & oceans: {en, de, lat, lon, d}

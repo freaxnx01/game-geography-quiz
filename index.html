@@ -816,6 +816,59 @@ class Component extends DCLogic {
     return this._contMaps[cont];
   }
 
+  // Splits a MultiPolygon feature into an EU-side and AS-side sub-feature
+  // along the infinite line through lon/lat points p1 -> p2, using a
+  // Sutherland-Hodgman clip per outer ring (holes are dropped — fine for a
+  // continents-map click target). Longitudes are shifted into 0-360 before
+  // clipping and back after, so a country whose landmass crosses the
+  // antimeridian (Russia) doesn't get misclassified by the raw -180/180 jump.
+  _lineSplitFeature(feature, p1, p2) {
+    const cross = (a, b, p) => (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]);
+    const norm = lon => lon < 0 ? lon + 360 : lon;
+    const unnorm = lon => lon > 180 ? lon - 360 : lon;
+    const clipRing = (ring, keep) => {
+      const pts = ring.map(([lon, lat]) => [norm(lon), lat]);
+      const out = [];
+      for (let i = 0; i < pts.length; i++) {
+        const cur = pts[i], prev = pts[(i - 1 + pts.length) % pts.length];
+        const cCur = cross(p1, p2, cur), cPrev = cross(p1, p2, prev);
+        const curIn = keep(cCur), prevIn = keep(cPrev);
+        const interp = () => {
+          const t = cPrev / (cPrev - cCur);
+          return [prev[0] + (cur[0] - prev[0]) * t, prev[1] + (cur[1] - prev[1]) * t];
+        };
+        if (curIn) { if (!prevIn) out.push(interp()); out.push(cur); }
+        else if (prevIn) out.push(interp());
+      }
+      if (out.length && (out[0][0] !== out[out.length - 1][0] || out[0][1] !== out[out.length - 1][1])) out.push(out[0]);
+      return out.map(([lon, lat]) => [unnorm(lon), lat]);
+    };
+    const side = keep => {
+      const polys = [];
+      for (const poly of feature.geometry.coordinates) {
+        const outer = clipRing(poly[0], keep);
+        if (outer.length >= 4) polys.push([outer]);
+      }
+      return { type: 'Feature', properties: {}, geometry: { type: 'MultiPolygon', coordinates: polys } };
+    };
+    return { eu: side(c => c <= 0), as: side(c => c >= 0) };
+  }
+
+  // Turkey's European (East Thrace) and Asian (Anatolia) territory are
+  // already separate polygons in the map data (the Bosphorus/Dardanelles are
+  // water) — no clip needed, just bucket each polygon by its own bbox.
+  _bboxSplitFeature(feature, lonThreshold) {
+    const eu = [], as = [];
+    for (const poly of feature.geometry.coordinates) {
+      const maxLon = Math.max(...poly[0].map(p => p[0]));
+      (maxLon <= lonThreshold ? eu : as).push(poly);
+    }
+    return {
+      eu: { type: 'Feature', properties: {}, geometry: { type: 'MultiPolygon', coordinates: eu } },
+      as: { type: 'Feature', properties: {}, geometry: { type: 'MultiPolygon', coordinates: as } }
+    };
+  }
+
   compareShapes() {
     const { cmpSel, topoReady } = this.state;
     if (!topoReady || !this.DATA) return [];
@@ -871,7 +924,9 @@ class Component extends DCLogic {
       });
     }
     if (mode === 'cont') {
-      const p = this.DATA.COUNTRIES.filter(c => c.d <= this.state.diff);
+      // ru/tr are transcontinental — a whole-country cont field has no single
+      // correct answer for them, so they never become the quizzed country.
+      const p = this.DATA.COUNTRIES.filter(c => c.d <= this.state.diff && c.iso !== 'ru' && c.iso !== 'tr');
       const li = this.state.lang === 'de' ? 1 : 0;
       const conts = Object.keys(D.CONTINENTS);
       return this._cycle(p, len).map(c => {
@@ -986,7 +1041,8 @@ class Component extends DCLogic {
     }
     if (mode === 'flagcont') {
       const li = this.state.lang === 'de' ? 1 : 0;
-      const p = D.COUNTRIES.filter(c => c.d <= this.state.diff);
+      // ru/tr are transcontinental — see the 'cont' mode note above.
+      const p = D.COUNTRIES.filter(c => c.d <= this.state.diff && c.iso !== 'ru' && c.iso !== 'tr');
       const conts = Object.keys(D.CONTINENTS);
       return this._cycle(p, len).map(c => {
         const wrong = this._shuffle(conts.filter(k => k !== c.cont)).slice(0, 3);
@@ -1129,12 +1185,32 @@ class Component extends DCLogic {
       const path = d3.geoPath(this.projSea);
       const contByFeat = new Map();
       for (const c of this.DATA.COUNTRIES) { const f = this.featureOf(c); if (f && !contByFeat.has(f)) contByFeat.set(f, c.cont); }
-      const EXTRA = { 'Greenland': 'NA', 'W. Sahara': 'AF', 'Western Sahara': 'AF', 'New Caledonia': 'OC', 'Fr. Polynesia': 'OC', 'Puerto Rico': 'NA', 'Falkland Is.': 'SA' };
+      const EXTRA = { 'Greenland': 'NA', 'W. Sahara': 'AF', 'Western Sahara': 'AF', 'New Caledonia': 'OC', 'Fr. Polynesia': 'OC', 'Puerto Rico': 'NA', 'Falkland Is.': 'SA', 'Antarctica': 'AN' };
       const regions = [];
+      // Russia and Turkey are transcontinental — split their landmass into
+      // separate EU/AS regions on this map instead of coloring the whole
+      // country by its single (grouping-only) `cont` field. COUNTRIES.cont
+      // stays untouched; this split is local to the continents map.
+      const ruFeat = this.featureOf(this.byIso('ru'));
+      const trFeat = this.featureOf(this.byIso('tr'));
       for (const f of (this.allFeats || [])) {
+        const name = f.properties && f.properties.name;
+        if (f === ruFeat && f.geometry && f.geometry.type === 'MultiPolygon') {
+          const { eu, as } = this._lineSplitFeature(f, [60, 68.5], [52, 47]);
+          const dEu = path(eu), dAs = path(as);
+          if (dEu) regions.push({ key: 'EU', d: dEu });
+          if (dAs) regions.push({ key: 'AS', d: dAs });
+          continue;
+        }
+        if (f === trFeat && f.geometry && f.geometry.type === 'MultiPolygon') {
+          const { eu, as } = this._bboxSplitFeature(f, 29.1);
+          const dEu = path(eu), dAs = path(as);
+          if (dEu) regions.push({ key: 'EU', d: dEu });
+          if (dAs) regions.push({ key: 'AS', d: dAs });
+          continue;
+        }
         const d = path(f);
         if (!d) continue;
-        const name = f.properties && f.properties.name;
         regions.push({ key: contByFeat.get(f) || EXTRA[name] || '', d });
       }
       this._region.cont = { vb: '0 0 960 500', regions, lakes: [] };
@@ -1148,7 +1224,8 @@ class Component extends DCLogic {
       }));
       mode = 'contkids';
     } else {
-      const pool = this.DATA.COUNTRIES.filter(c => c.d <= this.state.diff);
+      // ru/tr are transcontinental — see the 'cont' mode note in makeQuestions.
+      const pool = this.DATA.COUNTRIES.filter(c => c.d <= this.state.diff && c.iso !== 'ru' && c.iso !== 'tr');
       qs = this._cycle(pool, this.roundLen()).map(c => ({
         prompt: T.contClickP, kind: 'map', key: c.cont, main: this.cname(c), ctx: this.flag(c.iso, 80)
       }));
@@ -1174,7 +1251,7 @@ class Component extends DCLogic {
       return this.startPinGame(this.byIso(isos[Math.floor(Math.random() * isos.length)]));
     }
     if (mode === 'find') {
-      const conts = Object.keys(D.CONTINENTS);
+      const conts = Object.keys(D.CONTINENTS).filter(k => k !== 'AN');
       return this.startFindQuiz(conts[Math.floor(Math.random() * conts.length)], false);
     }
     return this.startQuiz(mode);
@@ -1612,7 +1689,7 @@ class Component extends DCLogic {
         vals.startFromSetup = () => st.variant === 'map' ? this.startContMap() : st.variant === 'kids' ? this.startContMap(true) : this.startQuiz('cont');
       } else if (st.mode === 'find') {
         const cont = st.cont === 'all' ? 'EU' : st.cont;
-        const conts = Object.keys(this.DATA.CONTINENTS);
+        const conts = Object.keys(this.DATA.CONTINENTS).filter(k => k !== 'AN');
         vals.setupChipsLabel = T.region;
         vals.setupChips = conts.map(k => ({
           label: this.DATA.CONTINENTS[k][li],
@@ -1635,7 +1712,7 @@ class Component extends DCLogic {
         vals.startFromSetup = () => this.startFindQuiz(cont, vv === 'all');
       } else {
         const p = this.pool();
-        const conts = ['all'].concat(Object.keys(this.DATA.CONTINENTS));
+        const conts = ['all'].concat(Object.keys(this.DATA.CONTINENTS).filter(k => k !== 'AN'));
         vals.setupChipsLabel = T.region;
         vals.setupChips = conts.map(k => ({
           label: k === 'all' ? T.world : this.DATA.CONTINENTS[k][li],
