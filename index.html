@@ -8,6 +8,7 @@
 </head>
 <body>
 <script src="./version.js"></script>
+<script src="./i18n.js"></script>
 <!-- dc template held in an inert <template> so the browser never parses its
      {{ }} placeholders as live SVG/img (which logged ~39 "Expected number"
      console errors + image 404s before support.js hydrated). support.js reads
@@ -434,7 +435,7 @@ input::placeholder { color: #5D6E92; }
 }">
 class Component extends DCLogic {
   state = {
-    lang: localStorage.getItem('terra.lang') || 'en',
+    lang: window.GG_LANG,
     diff: Math.min(3, Math.max(1, +(localStorage.getItem('terra.diff') || 2))),
     view: 'home', mode: null, cont: 'all',
     ready: false, topoReady: false, topoError: false, quizLoading: false,
@@ -620,6 +621,7 @@ class Component extends DCLogic {
     this._injectLib('https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js');
     this._injectLib('https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js');
     this.topoPromise = this._loadTopo();
+    window.addEventListener('gg-langchange', () => { this._cmpCache = { key: '', shapes: [] }; this.setState({ lang: window.GG_LANG }); });
   }
 
   _injectLib(src) {
@@ -1591,7 +1593,7 @@ class Component extends DCLogic {
 
   goHome() { clearTimeout(this._timer); clearInterval(this._speedTimer); this.setState({ view: 'home', picked: -1, mapClicked: '', nbGame: null, pinGame: null, quiz: this.state.quiz && this.state.view === 'quiz' ? null : this.state.quiz }); }
 
-  setLang(l) { localStorage.setItem('terra.lang', l); this.setState({ lang: l }); this._cmpCache = { key: '', shapes: [] }; }
+  setLang(l) { window.ggSetLang(l); }
   setDiff(d) { localStorage.setItem('terra.diff', String(d)); this.setState({ diff: d }); }
 
   // ---------- render ----------
