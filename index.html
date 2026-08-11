@@ -317,7 +317,7 @@ input::placeholder { color: #5D6E92; }
             <div style="font-size: clamp(22px, 4vw, 32px); font-weight: 800; text-align: center; text-wrap: balance;">{{ pinPrompt }}</div>
           </div>
           <div style="position: relative; margin-top: 14px;">
-            <svg viewBox="{{ pinVB }}" onWheel="{{ pinWheel }}" onMouseDown="{{ pinDown }}" onMouseMove="{{ pinMove }}" onMouseUp="{{ pinUp }}" onMouseLeave="{{ pinUp }}" style="width: 100%; display: block; background: #0C1B2E; border-radius: 14px; cursor: crosshair; touch-action: none;">
+            <svg viewBox="{{ pinVB }}" onWheel="{{ pinWheel }}" onPointerDown="{{ pinDown }}" onPointerMove="{{ pinMove }}" onPointerUp="{{ pinUp }}" onPointerCancel="{{ pinUp }}" style="width: 100%; display: block; background: #0C1B2E; border-radius: 14px; cursor: crosshair; touch-action: none;">
               <path d="{{ pinContext }}" fill="#1B2742" stroke="#0B1220" stroke-width="0.6" style="vector-effect: non-scaling-stroke;"></path>
               <sc-for list="{{ pinLands }}" as="ld" hint-placeholder-count="1">
                 <path d="{{ ld.d }}" fill="#2E4066" stroke="#5B74A8" stroke-width="1" style="vector-effect: non-scaling-stroke;"></path>
@@ -1465,7 +1465,11 @@ class Component extends DCLogic {
     return [vb[0] + (e.clientX - rect.left) / rect.width * vb[2], vb[1] + (e.clientY - rect.top) / rect.height * vb[3]];
   }
 
-  pinDown(e) { const g = this.state.pinGame; if (!g) return; this._pdrag = { sx: e.clientX, sy: e.clientY, vb: g.vb.slice(), p: this._svgPt(e, g), moved: false }; }
+  pinDown(e) {
+    const g = this.state.pinGame; if (!g) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    this._pdrag = { sx: e.clientX, sy: e.clientY, vb: g.vb.slice(), p: this._svgPt(e, g), moved: false };
+  }
   pinMove(e) {
     const g = this.state.pinGame, d = this._pdrag; if (!g || !d) return;
     const dx = e.clientX - d.sx, dy = e.clientY - d.sy;
@@ -1474,7 +1478,12 @@ class Component extends DCLogic {
     const rect = e.currentTarget.getBoundingClientRect(), vb = d.vb;
     this.setState({ pinGame: { ...g, vb: [vb[0] - dx / rect.width * vb[2], vb[1] - dy / rect.height * vb[3], vb[2], vb[3]] } });
   }
-  pinUp(e) { const g = this.state.pinGame, d = this._pdrag; this._pdrag = null; if (!g || !d) return; if (!d.moved && !g.reveal) this.pinPlace(d.p[0], d.p[1]); }
+  pinUp(e) {
+    const g = this.state.pinGame, d = this._pdrag; this._pdrag = null;
+    if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
+    if (!g || !d) return;
+    if (!d.moved && !g.reveal) this.pinPlace(d.p[0], d.p[1]);
+  }
   pinWheel(e) { const g = this.state.pinGame; if (!g) return; const p = this._svgPt(e, g); this._pinZoom(e.deltaY < 0 ? 0.82 : 1.2, p[0], p[1]); }
   pinZoomBtn(f) { const g = this.state.pinGame; if (!g) return; this._pinZoom(f, g.vb[0] + g.vb[2] / 2, g.vb[1] + g.vb[3] / 2); }
   pinReset() { const g = this.state.pinGame; if (!g) return; this.setState({ pinGame: { ...g, vb: g.map.vb.slice() } }); }
