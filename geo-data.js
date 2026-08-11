@@ -416,3 +416,16 @@ export const FLAG_SPECIAL = [
   { iso: 'er', en: 'An olive wreath and branch on a red triangle.', de: 'Ein Olivenkranz und -zweig auf rotem Dreieck.' },
   { iso: 'me', en: 'A golden double-headed eagle with a lion.', de: 'Ein goldener Doppeladler mit L\u00F6we.' }
 ];
+
+// EU membership as of 2026 (27 states).
+export const EU_MEMBERS = new Set([
+  'at', 'be', 'bg', 'hr', 'cy', 'cz', 'dk', 'ee', 'fi', 'fr', 'de', 'gr',
+  'hu', 'ie', 'it', 'lv', 'lt', 'lu', 'mt', 'nl', 'pl', 'pt', 'ro', 'sk',
+  'si', 'es', 'se'
+]);
+
+// Eurozone membership as of 2026 (20 states) — a subset of EU_MEMBERS.
+export const EUROZONE = new Set([
+  'at', 'be', 'hr', 'cy', 'ee', 'fi', 'fr', 'de', 'gr', 'ie', 'it', 'lv',
+  'lt', 'lu', 'mt', 'nl', 'pt', 'sk', 'si', 'es'
+]);
