@@ -452,6 +452,7 @@ class Component extends DCLogic {
     { id: 'flags', sec: 0, icon: 'M6 21V4m0 0h11l-2.5 3.5L17 11H6' },
     { id: 'caps', sec: 0, icon: 'M12 3.5l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.7z' },
     { id: 'cont', sec: 0, icon: 'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c-3.2 3.5-3.2 14.5 0 18M12 3c3.2 3.5 3.2 14.5 0 18' },
+    { id: 'eu', sec: 0, icon: 'M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8-6.3 3.8 1.7-7L2 9.2l7.1-.6z' },
     { id: 'find', sec: 0, icon: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 6.5v11M6.5 12h11' },
     { id: 'seas', sec: 0, icon: 'M3 9c3-3.5 6 3.5 9 0s6 3.5 9 0M3 15c3-3.5 6 3.5 9 0s6 3.5 9 0' },
     { id: 'shape', sec: 0, icon: 'M7 4.5L14 3l5.5 4.5-1.5 6 2.5 4-5.5 3.5L7 19l-3.5-6L5 7z' },
@@ -472,6 +473,7 @@ class Component extends DCLogic {
       sec0: 'World quizzes', sec1: 'Explore', sec2: 'Regional',
       m_flags: 'Flags', d_flags: 'Match the flag to its country',
       m_caps: 'Capitals', d_caps: 'Do you know every capital?',
+      m_eu: 'European Union', d_eu: 'Who is in the EU — and who uses the Euro?',
       m_cont: 'Continents', d_cont: 'Which continent is it on?',
       m_find: 'Find the Country', d_find: 'Click the right country on a continent map',
       m_seas: 'Seas & Oceans', d_seas: 'Name the marked waters on the map',
@@ -507,6 +509,10 @@ class Component extends DCLogic {
       flagOfP: 'Which is the flag of this country?',
       capOfP: 'What is the capital of {x}?',
       capWhichP: 'Which country has this capital?',
+      euMemberQP: 'Is {x} a member of the European Union?',
+      euroQP: 'Does {x} use the Euro?',
+      isMember: 'EU member', notMember: 'Not an EU member',
+      usesEuro: 'Uses the Euro', noEuro: 'Does not use the Euro',
       contOfP: 'Which continent is this country on?',
       nbP: 'Which of these countries is a direct neighbor?',
       seaQ: 'Which sea or ocean is marked?',
@@ -545,6 +551,7 @@ class Component extends DCLogic {
       sec0: 'Welt-Quizze', sec1: 'Entdecken', sec2: 'Regional',
       m_flags: 'Flaggen', d_flags: 'Ordne die Flagge dem Land zu',
       m_caps: 'Hauptst\u00E4dte', d_caps: 'Kennst du alle Hauptst\u00E4dte?',
+      m_eu: 'Europäische Union', d_eu: 'Wer ist in der EU — und wer hat den Euro?',
       m_cont: 'Kontinente', d_cont: 'Auf welchem Kontinent liegt es?',
       m_find: 'Land finden', d_find: 'Klicke das richtige Land auf der Kontinentkarte',
       m_seas: 'Meere & Ozeane', d_seas: 'Benenne das markierte Gew\u00E4sser',
@@ -580,6 +587,10 @@ class Component extends DCLogic {
       flagOfP: 'Welche ist die Flagge dieses Landes?',
       capOfP: 'Was ist die Hauptstadt von {x}?',
       capWhichP: 'Welches Land hat diese Hauptstadt?',
+      euMemberQP: 'Ist {x} Mitglied der Europäischen Union?',
+      euroQP: 'Verwendet {x} den Euro?',
+      isMember: 'EU-Mitglied', notMember: 'Kein EU-Mitglied',
+      usesEuro: 'Verwendet den Euro', noEuro: 'Verwendet den Euro nicht',
       contOfP: 'Auf welchem Kontinent liegt dieses Land?',
       nbP: 'Welches dieser L\u00E4nder ist ein direktes Nachbarland?',
       seaQ: 'Welches Meer bzw. welcher Ozean ist markiert?',
@@ -938,6 +949,20 @@ class Component extends DCLogic {
           opts: this._mcq(c.cont, wrong, k => D.CONTINENTS[k][li]) };
       });
     }
+    if (mode === 'eu') {
+      let p = D.COUNTRIES.filter(c => c.cont === 'EU' && c.d <= this.state.diff);
+      if (p.length < 8) p = D.COUNTRIES.filter(c => c.cont === 'EU');
+      return this._cycle(p, len).map((c, qi) => {
+        const isMember = D.EU_MEMBERS.has(c.iso);
+        if (qi % 2 === 1 && isMember) {
+          const inEuro = D.EUROZONE.has(c.iso);
+          return { prompt: this.fmt(T.euroQP, this.cname(c)), kind: 'text', main: this.cname(c), ctxImg: this.flag(c.iso, 80),
+            opts: this._mcq(inEuro, [!inEuro], b => b ? T.usesEuro : T.noEuro) };
+        }
+        return { prompt: this.fmt(T.euMemberQP, this.cname(c)), kind: 'text', main: this.cname(c), ctxImg: this.flag(c.iso, 80),
+          opts: this._mcq(isMember, [!isMember], b => b ? T.isMember : T.notMember) };
+      });
+    }
     if (mode === 'seas') {
       let p = D.SEAS.filter(s => s.d <= this.state.diff);
       if (p.length < 8) p = D.SEAS;
@@ -1250,7 +1275,7 @@ class Component extends DCLogic {
   randomQuiz() {
     if (!this.DATA) return;
     const D = this.DATA;
-    const opts = ['flags', 'flagsim', 'flagspec', 'flagzoom', 'flagblur', 'flagcap', 'flagcont', 'flagspeed', 'caps', 'cont', 'seas', 'shape', 'us', 'chq', 'nb', 'pin', 'find'];
+    const opts = ['flags', 'flagsim', 'flagspec', 'flagzoom', 'flagblur', 'flagcap', 'flagcont', 'flagspeed', 'caps', 'cont', 'eu', 'seas', 'shape', 'us', 'chq', 'nb', 'pin', 'find'];
     const mode = opts[Math.floor(Math.random() * opts.length)];
     if (mode === 'flagspeed') return this.startFlagSpeed();
     if (mode === 'nb') {
