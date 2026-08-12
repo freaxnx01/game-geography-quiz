@@ -950,8 +950,9 @@ class Component extends DCLogic {
       });
     }
     if (mode === 'eu') {
-      let p = D.COUNTRIES.filter(c => c.cont === 'EU' && c.d <= this.state.diff);
-      if (p.length < 8) p = D.COUNTRIES.filter(c => c.cont === 'EU');
+      const inPool = c => c.cont === 'EU' || D.EU_MEMBERS.has(c.iso);
+      let p = D.COUNTRIES.filter(c => inPool(c) && c.d <= this.state.diff);
+      if (p.length < 8) p = D.COUNTRIES.filter(inPool);
       return this._cycle(p, len).map((c, qi) => {
         const isMember = D.EU_MEMBERS.has(c.iso);
         if (qi % 2 === 1 && isMember) {
