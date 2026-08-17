@@ -586,7 +586,7 @@ class Component extends DCLogic {
       capOfP: 'Was ist die Hauptstadt von {x}?',
       capWhichP: 'Welches Land hat diese Hauptstadt?',
       currWhichP: 'Welche W\u00E4hrung verwendet {x}?',
-      currCountryP: 'Welches Land verwendet die Währung {x}?',
+      currCountryP: 'Welches Land verwendet die W\u00E4hrung {x}?',
       contOfP: 'Auf welchem Kontinent liegt dieses Land?',
       nbP: 'Welches dieser L\u00E4nder ist ein direktes Nachbarland?',
       seaQ: 'Welches Meer bzw. welcher Ozean ist markiert?',
@@ -933,7 +933,7 @@ class Component extends DCLogic {
       const uniqueP = p.filter(c => this.curUnique(c));
       return this._cycle(p, len).map((c, qi) => {
         if (qi % 2 === 1 && uniqueP.includes(c)) {
-          const wrong = this._distract(c, [uniqueP, D.COUNTRIES], 3, nameKey);
+          const wrong = this._distract(c, [uniqueP, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, nameKey);
           return { prompt: this.fmt(T.currCountryP, curKey(c)), kind: 'text', main: curKey(c), opts: this._mcq(c, wrong, nameKey) };
         }
         const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, curKey);
