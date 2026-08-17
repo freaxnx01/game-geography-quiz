@@ -431,7 +431,7 @@ export const COUNTRY_CURRENCY = {
   ua: 'UAH', gb: 'GBP', va: 'EUR',
   // ---- Asia ----
   cn: 'CNY', cy: 'EUR', in: 'INR', id: 'IDR', ir: 'IRR', iq: 'IQD', il: 'ILS',
-  jp: 'JPY', jo: 'JOD', kw: 'KWD', lb: 'LBP', my: 'MYR', mv: 'MVR', kp: 'KPW',
+  jp: 'JPY', jo: 'JOD', kw: 'KWD', my: 'MYR', mv: 'MVR', kp: 'KPW',
   om: 'OMR', pk: 'PKR', ph: 'PHP', qa: 'QAR', sa: 'SAR', sg: 'SGD', kr: 'KRW',
   lk: 'LKR', sy: 'SYP', tw: 'TWD', th: 'THB', tr: 'TRY', ae: 'AED', vn: 'VND',
   bd: 'BDT', np: 'NPR',
@@ -485,7 +485,6 @@ export const CURRENCIES = {
   JPY: { en: 'Japanese Yen', de: 'Japanischer Yen' },
   JOD: { en: 'Jordanian Dinar', de: 'Jordanischer Dinar' },
   KWD: { en: 'Kuwaiti Dinar', de: 'Kuwait-Dinar' },
-  LBP: { en: 'Lebanese Pound', de: 'Libanesisches Pfund' },
   MYR: { en: 'Malaysian Ringgit', de: 'Malaysischer Ringgit' },
   MVR: { en: 'Maldivian Rufiyaa', de: 'Malediven-Rufiyaa' },
   KPW: { en: 'North Korean Won', de: 'Nordkoreanischer Won' },

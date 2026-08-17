@@ -586,7 +586,7 @@ class Component extends DCLogic {
       capOfP: 'Was ist die Hauptstadt von {x}?',
       capWhichP: 'Welches Land hat diese Hauptstadt?',
       currWhichP: 'Welche W\u00E4hrung verwendet {x}?',
-      currCountryP: 'Welches Land verwendet den/die {x}?',
+      currCountryP: 'Welches Land verwendet die Währung {x}?',
       contOfP: 'Auf welchem Kontinent liegt dieses Land?',
       nbP: 'Welches dieser L\u00E4nder ist ein direktes Nachbarland?',
       seaQ: 'Welches Meer bzw. welcher Ozean ist markiert?',
@@ -1749,7 +1749,7 @@ class Component extends DCLogic {
           : poolSome.length + ' ' + T.countries + ' \u00B7 ' + Math.min(this.roundLen(), poolSome.length) + ' ' + T.questions;
         vals.startFromSetup = () => this.startFindQuiz(cont, vv === 'all');
       } else {
-        const p = this.pool();
+        const p = st.mode === 'curr' ? this.pool().filter(c => this.curCode(c)) : this.pool();
         const conts = ['all'].concat(Object.keys(this.DATA.CONTINENTS).filter(k => k !== 'AN'));
         vals.setupChipsLabel = T.region;
         vals.setupChips = conts.map(k => ({
