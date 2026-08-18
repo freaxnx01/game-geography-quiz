@@ -259,7 +259,35 @@ export const SEAS = [
   S('Gulf of Guinea','Golf von Guinea', 2, 2, 2),
   S('Mozambique Channel','Strasse von Mosambik', -18, 41, 3),
   S('Andaman Sea','Andamanensee', 10, 96, 3),
-  S('Java Sea','Javasee', -5, 111, 3)
+  S('Java Sea','Javasee', -5, 111, 3),
+  // Gulfs
+  S('Gulf of Finland','Finnischer Meerbusen', 60.0, 26.5, 2),
+  S('Gulf of Aden','Golf von Aden', 12.5, 48.5, 2),
+  S('Gulf of Oman','Golf von Oman', 24.5, 58.5, 2),
+  S('Gulf of California','Golf von Kalifornien', 28.0, -112.0, 2),
+  S('Gulf of Riga','Rigaer Bucht', 57.5, 23.5, 3),
+  S('Gulf of Bothnia','Bottnischer Meerbusen', 63.0, 20.5, 3),
+  S('Gulf of Panama','Golf von Panama', 8.0, -79.0, 3),
+  S('Gulf of Thailand','Golf von Thailand', 10.0, 101.0, 2),
+  S('Gulf of Carpentaria','Golf von Carpentaria', -14.0, 139.0, 3),
+  S('Gulf of St. Lawrence','Sankt-Lorenz-Golf', 48.0, -62.0, 3),
+  // Straits
+  S('Strait of Magellan','Magellanstrasse', -53.0, -70.5, 1),
+  S('Strait of Hormuz','Strasse von Hormus', 26.5, 56.5, 1),
+  S('Strait of Gibraltar','Strasse von Gibraltar', 35.95, -5.6, 1),
+  S('Bering Strait','Beringstrasse', 65.5, -169.0, 1),
+  S('Strait of Malacca','Strasse von Malakka', 3.0, 100.5, 1),
+  S('Bosphorus','Bosporus', 41.1, 29.05, 1),
+  S('Dardanelles','Dardanellen', 40.2, 26.4, 2),
+  S('Strait of Dover','Strasse von Dover', 51.0, 1.4, 2),
+  S('Cook Strait','Cookstrasse', -41.2, 174.5, 2),
+  S('Davis Strait','Davisstrasse', 66.0, -58.0, 3),
+  S('Drake Passage','Drakestrasse', -59.0, -65.0, 3),
+  S('Taiwan Strait','Taiwanstrasse', 24.5, 119.5, 3),
+  S('Torres Strait','Torresstrasse', -10.0, 142.2, 3),
+  S('Sunda Strait','Sundastrasse', -6.0, 105.8, 3),
+  S('Strait of Sicily','Strasse von Sizilien', 37.3, 11.5, 3),
+  S('Palk Strait','Palkstrasse', 9.5, 79.5, 3)
 ];
 
 // US states: {en, de (differs rarely), cap, ab}
