@@ -22,4 +22,3 @@ jobs:
       pipeline-ref: v1
       agent: opencode
       pre-preview: true
-      self-fix: true
