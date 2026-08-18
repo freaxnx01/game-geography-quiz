@@ -8,6 +8,12 @@ All notable changes to this project are documented here, following
 
 ### Added
 
+- Currencies quiz mode: match countries to their currency in both directions,
+  covering 146 countries and 105 currencies, localized EN/DE. Reverse-direction
+  questions are restricted to countries whose currency is unique, so shared
+  currencies (Euro, CFA francs, US dollar, …) never become the prompt.
+- 26 named water bodies to the Seas & Oceans quiz — 10 gulfs and 16
+  straits/passages.
 - Credits screen thanking Nataliia, accessible from the home screen.
 - Antarctica to the continent list (`CONTINENTS`), so it now appears as an
   answer option in the Continents and Flag → Continent quizzes and as a
