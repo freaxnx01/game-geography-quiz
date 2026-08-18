@@ -90,6 +90,23 @@ input::placeholder { color: #5D6E92; }
             </div>
           </div>
         </sc-for>
+        <div style="text-align: center; margin-top: 24px;">
+          <button onClick="{{ openCredits }}" style="background: none; border: none; color: #5D6E92; font-size: 13px; padding: 6px;" style-hover="color: #93A3C4;">{{ t.credits }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ vCredits }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Credits" style="max-width: 640px; margin: 44px auto 0; animation: fadeUp .3s ease;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 22px;">
+          <button onClick="{{ goHome }}" style="background: #131C30; border: 1px solid rgba(255,255,255,.1); color: #93A3C4; width: 36px; height: 36px; border-radius: 10px; font-size: 16px; display: grid; place-items: center;">✕</button>
+          <div style="font-weight: 700; font-size: 18px;">{{ t.credits }}</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <sc-for list="{{ credits }}" as="c" hint-placeholder-count="1">
+            <div style="background: #131C30; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 16px 18px; color: #ECF2FF; font-size: 15px; text-wrap: pretty;">{{ c.text }}</div>
+          </sc-for>
+        </div>
       </div>
     </sc-if>
 
@@ -463,6 +480,10 @@ class Component extends DCLogic {
     { id: 'chq', sec: 2, img: 'https://flagcdn.com/w80/ch.png' }
   ];
 
+  CREDITS = [
+    { key: 'nataliia' }
+  ];
+
   I18N = {
     en: {
       tag: 'Geo Quiz',
@@ -538,7 +559,9 @@ class Component extends DCLogic {
       nbMapPrompt: 'Click all {x} neighbors of {y}', foundOf: '{x}/{y} found', errorsN: '{x} wrong',
       nbSeqPrompt: 'Click this neighbor of {x}:', vtSeq: 'One by one on the map',
       mapLoading: 'Loading map\u2026',
-      mapError: 'Map data could not be loaded \u2014 shapes, seas and size comparison need an internet connection.'
+      mapError: 'Map data could not be loaded \u2014 shapes, seas and size comparison need an internet connection.',
+      credits: 'Credits',
+      credit_nataliia: 'Thank you, Nataliia, for your valuable feedback and improvements.'
     },
     de: {
       tag: 'Geo-Quiz',
@@ -614,7 +637,9 @@ class Component extends DCLogic {
       nbMapPrompt: 'Klicke alle {x} Nachbarl\u00E4nder von {y}', foundOf: '{x}/{y} gefunden', errorsN: '{x} Fehler',
       nbSeqPrompt: 'Klicke dieses Nachbarland von {x}:', vtSeq: 'Nacheinander anklicken',
       mapLoading: 'Karte wird geladen\u2026',
-      mapError: 'Kartendaten konnten nicht geladen werden \u2013 Umrisse, Meere und Gr\u00F6ssenvergleich brauchen eine Internetverbindung.'
+      mapError: 'Kartendaten konnten nicht geladen werden \u2013 Umrisse, Meere und Gr\u00F6ssenvergleich brauchen eine Internetverbindung.',
+      credits: 'Credits',
+      credit_nataliia: 'Danke, Nataliia, f\u00FCr dein wertvolles Feedback und deine Verbesserungen.'
     }
   };
 
@@ -1653,10 +1678,12 @@ class Component extends DCLogic {
       resPct: '', resMsg: '', resDetail: '', resNewBest: false, replay: () => {},
       cmpHasSuggestions: false, cmpEmpty: true, cmpLoading: false, cmpNote: '',
       vHome: st.view === 'home', vFlagHub: st.view === 'flaghub', vSetup: st.view === 'setup', vPick: st.view === 'pick',
+      vCredits: st.view === 'credits',
       vQuiz: st.view === 'quiz' && st.quiz, vResult: st.view === 'result', vCompare: st.view === 'compare',
       vNbMap: st.view === 'nbmap' && !!st.nbGame,
       goHome: () => this.goHome(),
       randomQuiz: () => this.randomQuiz(),
+      openCredits: () => this.setState({ view: 'credits' }),
       setEn: () => this.setLang('en'), setDe: () => this.setLang('de'),
       langEnBg: lang === 'en' ? '#FFB454' : 'transparent', langEnColor: lang === 'en' ? '#0B1220' : '#93A3C4',
       langDeBg: lang === 'de' ? '#FFB454' : 'transparent', langDeColor: lang === 'de' ? '#0B1220' : '#93A3C4',
@@ -1674,7 +1701,8 @@ class Component extends DCLogic {
             open: () => this.openMode(m.id)
           };
         })
-      }))
+      })),
+      credits: this.CREDITS.map(c => ({ text: T['credit_' + c.key] }))
     };
 
     {

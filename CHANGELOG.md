@@ -8,6 +8,7 @@ All notable changes to this project are documented here, following
 
 ### Added
 
+- Credits screen thanking Nataliia, accessible from the home screen.
 - Antarctica to the continent list (`CONTINENTS`), so it now appears as an
   answer option in the Continents and Flag → Continent quizzes and as a
   "click this continent" target in Continents · Kids / Map. The Antarctica
