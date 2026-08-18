@@ -422,7 +422,7 @@ export const FLAG_SPECIAL = [
 // are omitted rather than guessed. See docs/superpowers/specs/2026-08-11-currency-quiz-mode-design.md.
 export const COUNTRY_CURRENCY = {
   // ---- Europe ----
-  al: 'ALL', ad: 'EUR', at: 'EUR', by: 'BYN', be: 'EUR', ba: 'BAM', bg: 'BGN',
+  al: 'ALL', ad: 'EUR', at: 'EUR', by: 'BYN', be: 'EUR', ba: 'BAM', bg: 'EUR',
   hr: 'EUR', cz: 'CZK', dk: 'DKK', ee: 'EUR', fi: 'EUR', fr: 'EUR', de: 'EUR',
   gr: 'EUR', hu: 'HUF', is: 'ISK', ie: 'EUR', it: 'EUR', xk: 'EUR', lv: 'EUR',
   li: 'CHF', lt: 'EUR', lu: 'EUR', mt: 'EUR', md: 'MDL', mc: 'EUR', me: 'EUR',
@@ -460,7 +460,6 @@ export const CURRENCIES = {
   EUR: { en: 'Euro', de: 'Euro' },
   BYN: { en: 'Belarusian Ruble', de: 'Weißrussischer Rubel' },
   BAM: { en: 'Convertible Mark', de: 'Konvertible Mark' },
-  BGN: { en: 'Bulgarian Lev', de: 'Bulgarischer Lew' },
   CZK: { en: 'Czech Koruna', de: 'Tschechische Krone' },
   DKK: { en: 'Danish Krone', de: 'Dänische Krone' },
   HUF: { en: 'Hungarian Forint', de: 'Ungarischer Forint' },
