@@ -451,6 +451,7 @@ class Component extends DCLogic {
   MODES = [
     { id: 'flags', sec: 0, icon: 'M6 21V4m0 0h11l-2.5 3.5L17 11H6' },
     { id: 'caps', sec: 0, icon: 'M12 3.5l2.4 5 5.4.7-4 3.8 1 5.4-4.8-2.7-4.8 2.7 1-5.4-4-3.8 5.4-.7z' },
+    { id: 'curr', sec: 0, icon: 'M12 4.5v15M15 8.2c0-1.5-1.3-2.4-3-2.4s-3 .9-3 2.3c0 3.4 6 1.9 6 5.4 0 1.5-1.3 2.5-3 2.5s-3-1-3-2.5' },
     { id: 'cont', sec: 0, icon: 'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c-3.2 3.5-3.2 14.5 0 18M12 3c3.2 3.5 3.2 14.5 0 18' },
     { id: 'find', sec: 0, icon: 'M12 3a9 9 0 100 18 9 9 0 000-18zM12 6.5v11M6.5 12h11' },
     { id: 'seas', sec: 0, icon: 'M3 9c3-3.5 6 3.5 9 0s6 3.5 9 0M3 15c3-3.5 6 3.5 9 0s6 3.5 9 0' },
@@ -472,6 +473,7 @@ class Component extends DCLogic {
       sec0: 'World quizzes', sec1: 'Explore', sec2: 'Regional',
       m_flags: 'Flags', d_flags: 'Match the flag to its country',
       m_caps: 'Capitals', d_caps: 'Do you know every capital?',
+      m_curr: 'Currencies', d_curr: 'Match every country to its currency',
       m_cont: 'Continents', d_cont: 'Which continent is it on?',
       m_find: 'Find the Country', d_find: 'Click the right country on a continent map',
       m_seas: 'Seas & Oceans', d_seas: 'Name the marked waters on the map',
@@ -507,6 +509,8 @@ class Component extends DCLogic {
       flagOfP: 'Which is the flag of this country?',
       capOfP: 'What is the capital of {x}?',
       capWhichP: 'Which country has this capital?',
+      currWhichP: 'What currency does {x} use?',
+      currCountryP: 'Which country uses the {x}?',
       contOfP: 'Which continent is this country on?',
       nbP: 'Which of these countries is a direct neighbor?',
       seaQ: 'Which sea or ocean is marked?',
@@ -545,6 +549,7 @@ class Component extends DCLogic {
       sec0: 'Welt-Quizze', sec1: 'Entdecken', sec2: 'Regional',
       m_flags: 'Flaggen', d_flags: 'Ordne die Flagge dem Land zu',
       m_caps: 'Hauptst\u00E4dte', d_caps: 'Kennst du alle Hauptst\u00E4dte?',
+      m_curr: 'W\u00E4hrungen', d_curr: 'Ordne jedem Land seine W\u00E4hrung zu',
       m_cont: 'Kontinente', d_cont: 'Auf welchem Kontinent liegt es?',
       m_find: 'Land finden', d_find: 'Klicke das richtige Land auf der Kontinentkarte',
       m_seas: 'Meere & Ozeane', d_seas: 'Benenne das markierte Gew\u00E4sser',
@@ -580,6 +585,8 @@ class Component extends DCLogic {
       flagOfP: 'Welche ist die Flagge dieses Landes?',
       capOfP: 'Was ist die Hauptstadt von {x}?',
       capWhichP: 'Welches Land hat diese Hauptstadt?',
+      currWhichP: 'Welche W\u00E4hrung verwendet {x}?',
+      currCountryP: 'Welches Land verwendet die W\u00E4hrung {x}?',
       contOfP: 'Auf welchem Kontinent liegt dieses Land?',
       nbP: 'Welches dieser L\u00E4nder ist ein direktes Nachbarland?',
       seaQ: 'Welches Meer bzw. welcher Ozean ist markiert?',
@@ -708,6 +715,12 @@ class Component extends DCLogic {
   T() { return this.I18N[this.state.lang] || this.I18N.en; }
   cname(c) { return this.state.lang === 'de' ? c.de : c.en; }
   ccap(c) { return this.state.lang === 'de' ? c.capDe : c.cap; }
+  curCode(c) { return this.DATA.COUNTRY_CURRENCY[c.iso] || null; }
+  curName(c) { const code = this.curCode(c); const cur = code && this.DATA.CURRENCIES[code]; return cur ? (cur[this.state.lang] || cur.en) : ''; }
+  curUnique(c) {
+    const code = this.curCode(c); if (!code) return false;
+    return Object.values(this.DATA.COUNTRY_CURRENCY).filter(x => x === code).length === 1;
+  }
   flag(iso, w) { return 'https://flagcdn.com/w' + (w || 320) + '/' + iso + '.png'; }
   fmtArea(a) {
     const nf = new Intl.NumberFormat(this.state.lang === 'de' ? 'de-CH' : 'en-US');
@@ -914,6 +927,19 @@ class Component extends DCLogic {
         return { prompt: T.whichFlag, kind: 'img', img: this.flag(c.iso), opts: this._mcq(c, wrong, nameKey) };
       });
     }
+    if (mode === 'curr') {
+      const p = this.pool().filter(c => this.curCode(c));
+      const curKey = c => this.curName(c);
+      const uniqueP = p.filter(c => this.curUnique(c));
+      return this._cycle(p, len).map((c, qi) => {
+        if (qi % 2 === 1 && uniqueP.includes(c)) {
+          const wrong = this._distract(c, [uniqueP, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, nameKey);
+          return { prompt: this.fmt(T.currCountryP, curKey(c)), kind: 'text', main: curKey(c), opts: this._mcq(c, wrong, nameKey) };
+        }
+        const wrong = this._distract(c, [p, D.COUNTRIES.filter(x => x.cont === c.cont), D.COUNTRIES], 3, curKey);
+        return { prompt: this.fmt(T.currWhichP, this.cname(c)), kind: 'text', main: this.cname(c), ctxImg: this.flag(c.iso, 80), opts: this._mcq(c, wrong, curKey) };
+      });
+    }
     if (mode === 'caps') {
       const p = this.pool();
       const capKey = c => this.ccap(c);
@@ -1092,7 +1118,7 @@ class Component extends DCLogic {
     if (id === 'pin') { this.setState({ view: 'pick', pickFor: 'pin', pickQuery: '' }); return; }
     if (id === 'find') { this.setState({ view: 'setup', mode: 'find', cont: this.state.cont === 'all' ? 'EU' : this.state.cont, variant: 'some' }); return; }
     if (id === 'flags') { this.setState({ view: 'flaghub' }); return; }
-    if (id === 'caps' || id === 'shape' || id === 'us' || id === 'chq' || id === 'cont') { this.setState({ view: 'setup', mode: id, variant: 'mc' }); return; }
+    if (id === 'caps' || id === 'shape' || id === 'us' || id === 'chq' || id === 'cont' || id === 'curr') { this.setState({ view: 'setup', mode: id, variant: 'mc' }); return; }
     this.startQuiz(id);
   }
 
@@ -1250,7 +1276,7 @@ class Component extends DCLogic {
   randomQuiz() {
     if (!this.DATA) return;
     const D = this.DATA;
-    const opts = ['flags', 'flagsim', 'flagspec', 'flagzoom', 'flagblur', 'flagcap', 'flagcont', 'flagspeed', 'caps', 'cont', 'seas', 'shape', 'us', 'chq', 'nb', 'pin', 'find'];
+    const opts = ['flags', 'flagsim', 'flagspec', 'flagzoom', 'flagblur', 'flagcap', 'flagcont', 'flagspeed', 'caps', 'curr', 'cont', 'seas', 'shape', 'us', 'chq', 'nb', 'pin', 'find'];
     const mode = opts[Math.floor(Math.random() * opts.length)];
     if (mode === 'flagspeed') return this.startFlagSpeed();
     if (mode === 'nb') {
@@ -1723,7 +1749,7 @@ class Component extends DCLogic {
           : poolSome.length + ' ' + T.countries + ' \u00B7 ' + Math.min(this.roundLen(), poolSome.length) + ' ' + T.questions;
         vals.startFromSetup = () => this.startFindQuiz(cont, vv === 'all');
       } else {
-        const p = this.pool();
+        const p = st.mode === 'curr' ? this.pool().filter(c => this.curCode(c)) : this.pool();
         const conts = ['all'].concat(Object.keys(this.DATA.CONTINENTS).filter(k => k !== 'AN'));
         vals.setupChipsLabel = T.region;
         vals.setupChips = conts.map(k => ({
