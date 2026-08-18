@@ -272,22 +272,22 @@ export const SEAS = [
   S('Gulf of Carpentaria','Golf von Carpentaria', -14.0, 139.0, 3),
   S('Gulf of St. Lawrence','Sankt-Lorenz-Golf', 48.0, -62.0, 3),
   // Straits
-  S('Strait of Magellan','Magellanstraße', -53.0, -70.5, 1),
-  S('Strait of Hormuz','Straße von Hormus', 26.5, 56.5, 1),
-  S('Strait of Gibraltar','Straße von Gibraltar', 35.95, -5.6, 1),
-  S('Bering Strait','Beringstraße', 65.5, -169.0, 1),
-  S('Strait of Malacca','Straße von Malakka', 3.0, 100.5, 1),
+  S('Strait of Magellan','Magellanstrasse', -53.0, -70.5, 1),
+  S('Strait of Hormuz','Strasse von Hormus', 26.5, 56.5, 1),
+  S('Strait of Gibraltar','Strasse von Gibraltar', 35.95, -5.6, 1),
+  S('Bering Strait','Beringstrasse', 65.5, -169.0, 1),
+  S('Strait of Malacca','Strasse von Malakka', 3.0, 100.5, 1),
   S('Bosphorus','Bosporus', 41.1, 29.05, 1),
   S('Dardanelles','Dardanellen', 40.2, 26.4, 2),
-  S('Strait of Dover','Straße von Dover', 51.0, 1.4, 2),
-  S('Cook Strait','Cookstraße', -41.2, 174.5, 2),
-  S('Davis Strait','Davisstraße', 66.0, -58.0, 3),
-  S('Drake Passage','Drakestraße', -59.0, -65.0, 3),
-  S('Taiwan Strait','Taiwanstraße', 24.5, 119.5, 3),
-  S('Torres Strait','Torresstraße', -10.0, 142.2, 3),
-  S('Sunda Strait','Sundastraße', -6.0, 105.8, 3),
-  S('Strait of Sicily','Straße von Sizilien', 37.3, 11.5, 3),
-  S('Palk Strait','Palkstraße', 9.5, 79.5, 3)
+  S('Strait of Dover','Strasse von Dover', 51.0, 1.4, 2),
+  S('Cook Strait','Cookstrasse', -41.2, 174.5, 2),
+  S('Davis Strait','Davisstrasse', 66.0, -58.0, 3),
+  S('Drake Passage','Drakestrasse', -59.0, -65.0, 3),
+  S('Taiwan Strait','Taiwanstrasse', 24.5, 119.5, 3),
+  S('Torres Strait','Torresstrasse', -10.0, 142.2, 3),
+  S('Sunda Strait','Sundastrasse', -6.0, 105.8, 3),
+  S('Strait of Sicily','Strasse von Sizilien', 37.3, 11.5, 3),
+  S('Palk Strait','Palkstrasse', 9.5, 79.5, 3)
 ];
 
 // US states: {en, de (differs rarely), cap, ab}
