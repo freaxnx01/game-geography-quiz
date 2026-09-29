@@ -4,6 +4,11 @@ All notable changes to this project are documented here, following
 [Keep a Changelog](https://keepachangelog.com) and
 [Semantic Versioning](https://semver.org).
 
+## [0.3.0] - 2026-09-29
+
+### Added
+- Fullscreen toggle (⛶) in the game navigation
+
 ## [0.2.0] - 2026-08-18
 
 ### Added
