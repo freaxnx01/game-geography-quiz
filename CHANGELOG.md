@@ -4,6 +4,11 @@ All notable changes to this project are documented here, following
 [Keep a Changelog](https://keepachangelog.com) and
 [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+### Added
+- Hover over the version number to see when the game was last updated, in your own time zone, and how long ago
+
 ## [0.3.0] - 2026-09-29
 
 ### Added
